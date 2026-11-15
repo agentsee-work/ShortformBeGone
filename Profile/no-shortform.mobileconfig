@@ -49,6 +49,9 @@
 			<false/>
 			<key>allowEraseContentAndSettings</key>
 			<false/>
+			<!-- Safari's Private Browsing can run without the Safari blocker. Delete these two lines to keep it. -->
+			<key>allowSafariPrivateBrowsing</key>
+			<false/>
 			<key>blockedAppBundleIDs</key>
 			<array>
 				<!-- Short-form video apps -->

@@ -25,15 +25,19 @@ Everything for the listing, and what still has to be done by hand.
 ```
 ShortformBeGone blocks short-form, infinite-scroll video on your iPhone or iPad: Instagram Reels, YouTube Shorts, TikTok and feeds like them. Messaging, long-form video and ordinary browsing keep working.
 
-It is built for people who have tried app timers and deleted-then-reinstalled their way through every softer option. The lock cannot be switched off in Settings, and removing it needs a password that you hand to someone else.
+WORKS IN A MINUTE
+Switch on the ShortformBeGone Safari blocker in Settings and Shorts and Reels stop loading in Safari straight away, even from inside a site you already have open. Long-form YouTube keeps working.
 
-IMPORTANT: SETUP NEEDS A MAC AND ERASES YOUR DEVICE ONCE
-iOS only runs a content filter like this on a supervised device. Supervising is a one-time erase and restore using Apple Configurator (free) on a Mac. The app walks you through it step by step, including what to back up first. Until that is done, the app can show you the rules and the guide but cannot block anything.
+A LOCK FOR WHEN WILLPOWER RUNS OUT
+A blocker you can switch off in a tap does not survive a weak moment. For people who have tried app timers and deleted-then-reinstalled their way through every softer option, the app includes a full guide to locking your device down: a content filter that cannot be switched off in Settings, the apps themselves blocked, and a removal password that you hand to someone else.
+
+The lock needs a Mac and erases your device once. iOS only allows it on a supervised device, which means a one-time erase and restore using Apple Configurator (free). The app walks you through it, including what to back up first.
 
 WHAT IT BLOCKS
-• Whole sites that are only a short-form feed, such as tiktok.com, in every app
+• Whole sites that are only a short-form feed, such as tiktok.com
 • Just the short-form sections of sites worth keeping: youtube.com/shorts, instagram.com/reel and /explore, facebook.com/reel and /watch, snapchat.com/spotlight
-• With the included configuration profile: the apps themselves, other browsers, and deleting the filter
+• The links and shelves that lead into them
+• With the lock: the apps themselves, other browsers, and deleting the filter
 
 WHAT IT LEAVES ALONE
 • Long-form YouTube in Safari
@@ -41,14 +45,12 @@ WHAT IT LEAVES ALONE
 • Everything else
 
 IN THE APP
-• Status: whether the filter is running
+• Status: which layers are running
 • Rules: what is blocked, and a box to test any address
 • Setup: the full guide, and the profile ready to send to your Mac
 
 PRIVATE BY DESIGN
-The filter checks each address against a list on your device and keeps no history. It has no network access of its own. No account, no analytics, no ads, no purchases. Nothing leaves your device.
-
-The rules are yours to change: edit two lists in the profile.
+Safari applies the blocking rules itself; the app never sees what you browse. The content filter checks each address against a list on your device and keeps no history. No account, no analytics, no ads, no purchases. Nothing leaves your device.
 
 Free, and staying free.
 ```
@@ -65,18 +67,22 @@ Free, and staying free.
 Paste into "Notes" under App Review Information:
 
 ```
-ShortformBeGone is a content filter (NEFilterDataProvider + NEFilterControlProvider) for people who want to block short-form video on their own device.
+ShortformBeGone blocks short-form video (Reels, Shorts, TikTok-style feeds) for people who want it off their own device.
 
-As documented by Apple (TN3134), a content filter provider on iOS only runs on a supervised device, where it is enabled by a com.apple.webcontent-filter configuration profile. The app therefore cannot enable the filter on an ordinary review device, and does not attempt to: it never calls NEFilterManager.saveToPreferences.
+TO TEST ON ANY DEVICE, NO SIGN-IN:
+1. Open Settings > Apps > Safari > Extensions > ShortformBeGone and switch it on.
+2. In Safari, open youtube.com/shorts or instagram.com/reels: they do not load. youtube.com/watch?v=... still plays.
+3. In the app, the Status tab shows "Safari blocker: On". The Rules tab lists the rules; type "youtube.com/shorts/abc" into "Test an address" to see it matched.
 
-What works on any device, with no sign-in:
-- Status tab: reports that the filter is not set up.
-- Rules tab: lists the rules; type e.g. "youtube.com/shorts/abc" into "Test an address" to see it matched, and "youtube.com/watch?v=abc" to see it allowed.
-- Setup tab: the full guide. Step 3 shares the configuration profile template (bundled in the app) and a small shell script that the user runs on their own Mac to set the profile's removal password. The script is not executed on the device.
+The app has two parts:
+- A Safari content blocker extension. Works on any device, as above.
+- A network content filter (NEFilterDataProvider + NEFilterControlProvider). As documented in TN3134, this only runs on a supervised device, where it is enabled by a com.apple.webcontent-filter configuration profile. The app never calls NEFilterManager.saveToPreferences. On a review device the Status tab reports it as "Not set up", which is expected.
 
-To see the filter running: supervise a test device with Apple Configurator, install the app, then install the profile from Setup > Install the profile using Apple Configurator. The Status tab turns green and youtube.com/shorts stops loading in Safari.
+The Setup tab is a guide to supervising one's own device. Its "Install the profile" step shares the configuration profile template (bundled in the app) and a small shell script that the user runs on their own Mac to set the profile's removal password. The script is never executed on the device.
 
-Privacy: the filter extension keeps no history and makes no network connections. The app collects no data and contains no third-party code.
+To see the network filter running: supervise a test device with Apple Configurator, install the app, then install the profile with Apple Configurator. The Status tab turns green.
+
+Privacy: neither extension keeps history or makes network connections. The app collects no data and contains no third-party code.
 ```
 
 A short screen recording of the filter working on your supervised phone, attached to the review notes, will help a lot.
@@ -104,4 +110,4 @@ Suggested order: `1-status`, `2-rules-blocked`, `3-setup`, `4-install-profile`. 
 
 ## Review risk
 
-The app is unusual: it does nothing visible on an unsupervised device. Apple may ask for a demonstration, or push back under guideline 2.1 (cannot verify) or 4.2 (minimal functionality). The review notes and a screen recording are the answer. If it is rejected, the fallbacks are TestFlight public links (builds last 90 days) or sharing the source so others can build it themselves.
+Lower than before: the Safari blocker works on a reviewer's ordinary device, so the app does something visible without supervision. The network filter still cannot be shown on an unsupervised device; the review notes explain that. A screen recording of the full lock on your supervised phone is still worth attaching.

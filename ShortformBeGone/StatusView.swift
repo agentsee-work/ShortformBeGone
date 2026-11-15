@@ -107,43 +107,72 @@ struct StatusView: View {
         }
     }
 
-    private var symbol: String {
+    /// The two layers combined into one headline.
+    private enum Summary {
+        case checking
+        /// Both layers on: blocked and locked.
+        case blocked
+        /// Network filter on, Safari blocker off.
+        case needsSafariBlocker
+        /// Safari blocker on, but no profile, so nothing is locked.
+        case safariOnly
+        case filterDisabled
+        case notSetUp
+    }
+
+    private var summary: Summary {
+        let safariOn = filter.safariBlocker == .on
         switch filter.state {
+        case .checking: return .checking
+        case .active: return safariOn ? .blocked : .needsSafariBlocker
+        case .disabled: return .filterDisabled
+        case .notInstalled: return safariOn ? .safariOnly : .notSetUp
+        }
+    }
+
+    private var symbol: String {
+        switch summary {
         case .checking: "shield"
-        case .active: "checkmark.shield.fill"
-        case .disabled: "exclamationmark.shield.fill"
-        case .notInstalled: "shield.slash"
+        case .blocked: "checkmark.shield.fill"
+        case .needsSafariBlocker, .filterDisabled: "exclamationmark.shield.fill"
+        case .safariOnly: "shield.lefthalf.filled"
+        case .notSetUp: "shield.slash"
         }
     }
 
     private var tint: Color {
-        switch filter.state {
-        case .checking: .secondary
-        case .active: .green
-        case .disabled: .orange
-        case .notInstalled: .secondary
+        switch summary {
+        case .checking, .notSetUp: .secondary
+        case .blocked: .green
+        case .needsSafariBlocker, .filterDisabled, .safariOnly: .orange
         }
     }
 
     private var title: String {
-        switch filter.state {
+        switch summary {
         case .checking: "Checking…"
-        case .active: "Short-form video is blocked"
-        case .disabled: "Filter installed but switched off"
-        case .notInstalled: "Not set up yet"
+        case .blocked: "Short-form video is blocked"
+        case .needsSafariBlocker: "Switch on the Safari blocker"
+        case .safariOnly: "Blocked in Safari, not locked"
+        case .filterDisabled: "Filter installed but switched off"
+        case .notSetUp: "Not set up yet"
         }
     }
 
     private var message: String {
-        switch filter.state {
+        switch summary {
         case .checking:
-            "Looking for the content filter."
-        case .active:
-            "The content filter is running. Reels, Shorts and TikTok-style feeds are blocked in Safari and in every app."
-        case .disabled:
+            "Looking for the filter and the Safari blocker."
+        case .blocked:
+            "Both layers are running. Reels, Shorts and TikTok-style feeds are blocked in Safari and in every app."
+        case .needsSafariBlocker:
+            "The network filter is running, but Shorts and Reels can still be reached from inside a site that is already open. The Safari blocker closes that."
+        case .safariOnly:
+            "Shorts and Reels are blocked in Safari. Nothing stops you switching the blocker off or using another app, until you finish the setup guide."
+        case .filterDisabled:
             "The filter is on this device but not running. Check Settings → General → VPN & Device Management, or reinstall the profile."
-        case .notInstalled:
-            "The content filter is not running on this device. Follow the setup guide to supervise the device and install the profile."
+        case .notSetUp:
+            "Nothing is blocked yet. Start with the Safari blocker, which takes a minute, then follow the setup guide to lock it."
         }
     }
 }

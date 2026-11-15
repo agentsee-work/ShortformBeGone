@@ -68,7 +68,9 @@ final class ShortformBeGoneUITests: XCTestCase {
         XCTAssertTrue(app.staticTexts["Supervise this device"].waitForExistence(timeout: 5))
         snapshot("3-setup")
 
-        app.staticTexts["Install the profile"].tap()
+        let profileStep = app.staticTexts["Install the profile"]
+        if !profileStep.isHittable { app.swipeUp() }
+        profileStep.tap()
         XCTAssertTrue(app.buttons["Send the profile to your Mac"].waitForExistence(timeout: 5))
         snapshot("4-install-profile")
 
@@ -90,7 +92,7 @@ final class ShortformBeGoneUITests: XCTestCase {
         XCTAssertTrue(app.staticTexts["Not set up yet"].waitForExistence(timeout: 10))
         snapshot("5-not-set-up")
         app.buttons["Open the setup guide"].tap()
-        XCTAssertTrue(app.staticTexts["Get ready"].waitForExistence(timeout: 5))
+        XCTAssertTrue(app.staticTexts["Switch on the Safari blocker"].waitForExistence(timeout: 5))
 
         app.swipeUp()
         app.staticTexts["About and privacy"].tap()

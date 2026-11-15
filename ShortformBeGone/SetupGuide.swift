@@ -35,6 +35,24 @@ enum SetupGuide {
 
     static let steps: [SetupStep] = [
         SetupStep(
+            id: "blocker",
+            title: "Switch on the Safari blocker",
+            summary: "Blocks Shorts and Reels in Safari straight away. No Mac needed.",
+            time: "1 minute",
+            warning: nil,
+            sections: [
+                .init(heading: nil, items: [
+                    "Open Settings → Apps → Safari → Extensions.",
+                    "Tap ShortformBeGone and switch it on.",
+                    "Come back here. The Status tab should show the Safari blocker as On.",
+                ]),
+                .init(heading: "What this does and does not do", items: [
+                    "It blocks the short-form sections of sites in Safari, even from inside a site that is already open.",
+                    "By itself it is not a lock: it can be switched off in Settings, and it does not cover apps. The remaining steps add the lock.",
+                ]),
+            ]
+        ),
+        SetupStep(
             id: "prepare",
             title: "Get ready",
             summary: "Protect your sign-ins and back up before anything is erased.",
@@ -112,7 +130,7 @@ enum SetupGuide {
                 ]),
                 .init(heading: "Check, then hand over", items: [
                     "Settings → General → VPN & Device Management should list “No Short-Form Video” and a content filter.",
-                    "The Status tab in this app should turn green.",
+                    "The Status tab in this app should turn green, with both layers On.",
                     "Give the printed password to your keyholder, then delete the locked copy of the profile from the Mac.",
                 ]),
             ],
@@ -151,7 +169,7 @@ enum SetupGuide {
                     "It behaves the same on Wi-Fi and mobile data.",
                 ]),
                 .init(heading: "Known gaps", items: [
-                    "Rules for a section of a site, such as youtube.com/shorts, catch a fresh visit but can be bypassed from inside the site once it is already open. Rules for whole sites cannot. To be certain about a site, block all of it in the profile.",
+                    "The Safari blocker can be switched off in Settings → Apps → Safari → Extensions. If you do that, Shorts and Reels come back inside sites that are already open.",
                     "A full restore from a computer removes everything. That takes over an hour, which is the point, and means you can never be locked out for good.",
                     "Video played inline inside other apps, such as chat or news apps, is not covered.",
                     "If the filter stops unexpectedly, traffic may pass until it restarts.",

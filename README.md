@@ -10,9 +10,10 @@ It has no account, no ads, no purchases and collects no data. See [PRIVACY.md](P
 | --- | --- | --- |
 | 1. Supervised configuration profile | Blocks the apps by bundle ID, blocks other browsers, blocks app deletion and erase from Settings | Needs the removal password or a full restore from a computer |
 | 2. ShortformBeGone content filter | Checks the full URL of every Safari and web-view request, and the hostname of every app's connections, against your rules | Locked by the profile; the rules live in the profile too |
-| 3. Account settings | YouTube watch history off, which removes home-feed recommendations | Easy, but it only removes temptation |
+| 3. Safari content blocker | Blocks the short-form sections of sites on every request Safari makes, including from inside a site that is already open, and hides the links into them | **Not locked.** It can be switched off in Settings → Apps → Safari → Extensions |
+| 4. Account settings | YouTube watch history off, which removes home-feed recommendations | Easy, but it only removes temptation |
 
-iOS only runs a content filter like this on a **supervised** device. Supervising means a one-time erase with Apple Configurator on a Mac. That is the price of a lock that holds.
+The Safari blocker works on any iPhone or iPad the moment you switch it on, with no Mac and no erase. The lock is the part that needs more: iOS only runs the network content filter on a **supervised** device. Supervising means a one-time erase with Apple Configurator on a Mac. That is the price of a lock that holds.
 
 | Flow | What the filter sees | Rule used |
 | --- | --- | --- |
@@ -32,6 +33,10 @@ You do **not** need an Apple Developer account or Xcode when you install the app
 ## Setup
 
 The app's Setup tab carries these steps too.
+
+### 0. Switch on the Safari blocker
+
+Settings → Apps → Safari → Extensions → ShortformBeGone → on. One minute, no Mac. Shorts and Reels are now blocked in Safari; the steps below add the lock.
 
 ### 1. Get ready
 
@@ -87,7 +92,8 @@ Blocked apps gone and not installable; other browsers not installable; profile r
 ## Known gaps
 
 - **Full restore from a computer** removes everything. Deliberate: you can never be locked out for good.
-- **Section rules only see the first request on each connection.** Measured on iOS 27.2: the filter is shown one address per connection, not per page. A fresh visit to `youtube.com/shorts` is blocked. But once Safari already has a connection open to the same site (you were just on the YouTube home page, say), opening or tapping into Shorts reuses it and the filter is never asked. The same applies to the Instagram and Facebook section rules. Whole-site rules (`DenyHosts`) do not have this gap. To close it for a site, add it to `DenyHosts` and lose the rest of that site too.
+- **The Safari blocker is not locked.** The network filter is shown one address per connection, so by itself it misses Shorts reached from inside a YouTube session that is already open (measured on iOS 27.2). The Safari blocker closes that gap and was confirmed on a supervised iPhone, but you can switch it off in Settings → Apps → Safari → Extensions. Apple offers no profile setting to lock a content blocker on a device that is not enrolled in an MDM server. The profile turns off Safari Private Browsing, where the blocker may not run.
+- **Hidden links are best-effort.** The blocker hides the Shorts tab and shelves using the sites' current page structure, which changes. Blocking the requests does not depend on it.
 - **Inline video in other apps** (chat, news) isn't covered.
 - **Filter failure:** if the extension crashes, traffic may pass until it restarts.
 - **New apps** aren't in the list until you add their bundle ID and domain.
@@ -107,6 +113,7 @@ Requires Xcode 27 and, to run on a device, a paid Apple Developer account (Netwo
 | `ShortformBeGone` | The app: status, rules, setup guide |
 | `ShortformBeGoneFilterData` | `NEFilterDataProvider`: makes the block decisions |
 | `ShortformBeGoneFilterControl` | `NEFilterControlProvider`: required partner, does nothing |
+| `ShortformBeGoneSafariBlocker` | Safari content blocker: rules generated from the same list |
 | `Shared/FilterRules.swift` | The rule matcher, used by all three |
 
 If you change the bundle ID, change `PluginBundleID` in the profile to match. A development-signed build expires after a year; an App Store build does not.
