@@ -81,7 +81,8 @@ final class FilterStatusModel {
             case "reset": await resetURLFilterCache()
             case "remove": await removeURLFilter()
             case "check": await refreshURLFilter(); await logURLFilterVerdicts()
-            default: break
+            default:
+                if command.hasPrefix("parse-") { await setURLFilterParsing(String(command.dropFirst(6))) }
             }
         }
         #endif
@@ -176,6 +177,16 @@ final class FilterStatusModel {
             // closed blocks every page whenever the lookup server is out of reach.
             manager.shouldFailClosed = false
             manager.prefilterFetchInterval = 2700
+            if #available(iOS 27.0, *) {
+                // Without this the system looks up only the exact address, so
+                // `youtube.com/shorts` would not cover `youtube.com/shorts/<id>`.
+                // Measured on iOS 27.2: hierarchy enumeration is off by default.
+                manager.urlParsingConfiguration = .init(
+                    path: .init(excluded: false, segments: 0, enumerateHierarchy: true),
+                    query: .init(excluded: true),
+                    excludeFragment: true
+                )
+            }
             manager.isEnabled = true
             try await saveURLFilter(manager)
             Self.log.notice("URL filter: configuration saved")
@@ -217,6 +228,35 @@ final class FilterStatusModel {
     }
 
     #if DEBUG
+    /// Tells the system how to split an address into the keys it looks up.
+    private func setURLFilterParsing(_ variant: String) async {
+        guard #available(iOS 27.0, *) else { return }
+        typealias Parsing = NEURLFilterManager.ParsingConfiguration
+        let manager = NEURLFilterManager.shared
+        do {
+            try await manager.loadFromPreferences()
+            Self.log.notice("URL filter: parsing was \(String(describing: manager.urlParsingConfiguration), privacy: .public), expression \(manager.urlParsingRegularExpression ?? "-", privacy: .public)")
+            let configuration: Parsing
+            switch variant {
+            case "hier":
+                configuration = Parsing(path: .init(excluded: false, segments: 0, enumerateHierarchy: true), query: .init(excluded: true), excludeFragment: true)
+            case "seg1":
+                configuration = Parsing(path: .init(excluded: false, segments: 1, enumerateHierarchy: true), query: .init(excluded: true), excludeFragment: true)
+            case "seg3":
+                configuration = Parsing(path: .init(excluded: false, segments: 3, enumerateHierarchy: true), query: .init(excluded: true), excludeFragment: true)
+            case "noquery":
+                configuration = Parsing(query: .init(excluded: true), excludeFragment: true)
+            default:
+                configuration = Parsing()
+            }
+            manager.urlParsingConfiguration = configuration
+            try await saveURLFilter(manager)
+            Self.log.notice("URL filter: parsing set to \(variant, privacy: .public): \(String(describing: manager.urlParsingConfiguration), privacy: .public)")
+        } catch {
+            Self.log.error("URL filter: could not set parsing: \(String(describing: error), privacy: .public)")
+        }
+    }
+
     /// Asks the system what it would do with a set of addresses, and logs each answer.
     private func logURLFilterVerdicts() async {
         guard #available(iOS 26.0, *) else { return }
@@ -229,6 +269,9 @@ final class FilterStatusModel {
             "https://m.youtube.com/youtubei/v1/reel/reel_watch_sequence?prettyPrint=false",
             "https://www.youtube.com/youtubei/v1/reel/reel_item_watch?prettyPrint=false",
             "https://m.youtube.com/youtubei/v1/reel",
+            "https://m.youtube.com/youtubei/v1/reel/",
+            "https://m.youtube.com/shorts/",
+            "https://m.youtube.com/shorts?x=1",
             "https://m.youtube.com/youtubei/v1/player?prettyPrint=false",
             "https://m.youtube.com/watch?v=dQw4w9WgXcQ",
             "https://m.youtube.com/",
