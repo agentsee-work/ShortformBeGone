@@ -51,7 +51,11 @@ struct StatusView: View {
                         } label: {
                             Label("URL filter (prototype)", systemImage: "link.badge.plus")
                         }
-                        if filter.urlFilter != .running && filter.urlFilter != .starting {
+                        if filter.urlFilterEnabled {
+                            Button("Turn off the URL filter", role: .destructive) {
+                                Task { await filter.turnOffURLFilter() }
+                            }
+                        } else {
                             Button("Turn on the URL filter") {
                                 Task { await filter.turnOnURLFilter() }
                             }

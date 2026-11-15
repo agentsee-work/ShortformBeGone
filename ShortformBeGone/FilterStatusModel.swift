@@ -47,6 +47,8 @@ final class FilterStatusModel {
     }
 
     private(set) var urlFilter: URLFilterState = .unavailable
+    /// Whether the URL filter is switched on, whatever state it has reached.
+    private(set) var urlFilterEnabled = false
 
     /// The lookup server this build was made for, if any.
     static var lookupServerURL: URL? {
@@ -69,8 +71,23 @@ final class FilterStatusModel {
     func refresh() async {
         await refreshSafariBlocker()
         await refreshFilter()
+        #if DEBUG
+        // `-urlFilter on|off|reset|remove` drives the prototype from the Mac.
+        if !handledURLFilterCommand, let command = UserDefaults.standard.string(forKey: "urlFilter") {
+            handledURLFilterCommand = true
+            switch command {
+            case "on": await turnOnURLFilter()
+            case "off": await turnOffURLFilter()
+            case "reset": await resetURLFilterCache()
+            case "remove": await removeURLFilter()
+            default: break
+            }
+        }
+        #endif
         await refreshURLFilter()
     }
+
+    @ObservationIgnored private var handledURLFilterCommand = false
 
     /// Gives Safari the current rule list and reads whether the blocker is switched on.
     private func refreshSafariBlocker() async {
@@ -106,14 +123,15 @@ final class FilterStatusModel {
         }
         let status = await manager.status
         let lastError = await manager.lastDisconnectError
-        Self.log.notice("URL filter: enabled \(manager.isEnabled, privacy: .public), status \(status.rawValue, privacy: .public), last error \(String(describing: lastError), privacy: .public), server \(manager.pirServerURL?.absoluteString ?? "-", privacy: .public)")
+        urlFilterEnabled = manager.isEnabled
+        Self.log.notice("URL filter: enabled \(manager.isEnabled, privacy: .public), fail closed \(manager.shouldFailClosed, privacy: .public), status \(status.rawValue, privacy: .public), last error \(String(describing: lastError), privacy: .public), server \(manager.pirServerURL?.absoluteString ?? "-", privacy: .public)")
         switch status {
         case .running: urlFilter = .running
         case .starting: urlFilter = .starting
         case .stopped, .stopping:
             if let lastError { urlFilter = .failed(String(describing: lastError)) } else { urlFilter = manager.isEnabled ? .stopped : .notConfigured }
-        case .invalid: urlFilter = .notConfigured
-        @unknown default: urlFilter = .notConfigured
+        case .invalid, _:
+            if manager.isEnabled, let lastError { urlFilter = .failed(String(describing: lastError)) } else { urlFilter = manager.isEnabled ? .stopped : .notConfigured }
         }
     }
 
@@ -130,11 +148,12 @@ final class FilterStatusModel {
                 pirAuthenticationToken: Self.lookupServerToken,
                 controlProviderBundleIdentifier: (Bundle.main.bundleIdentifier ?? "") + ".URLFilter"
             )
-            // If the lookup server cannot be reached, block possible matches rather than let them through.
-            manager.shouldFailClosed = true
+            // Prototype: let pages through when a lookup cannot be made. Failing
+            // closed blocks every page whenever the lookup server is out of reach.
+            manager.shouldFailClosed = false
             manager.prefilterFetchInterval = 2700
             manager.isEnabled = true
-            try await manager.saveToPreferences()
+            try await saveURLFilter(manager)
             Self.log.notice("URL filter: configuration saved")
         } catch {
             Self.log.error("URL filter: could not save configuration: \(String(describing: error), privacy: .public)")
@@ -142,6 +161,60 @@ final class FilterStatusModel {
             return
         }
         await refreshURLFilter()
+    }
+
+    /// Switches the system URL filter off, leaving its configuration in place.
+    func turnOffURLFilter() async {
+        guard #available(iOS 26.0, *) else { return }
+        let manager = NEURLFilterManager.shared
+        do {
+            try await manager.loadFromPreferences()
+            manager.isEnabled = false
+            try await saveURLFilter(manager)
+            Self.log.notice("URL filter: switched off")
+        } catch {
+            Self.log.error("URL filter: could not switch off: \(String(describing: error), privacy: .public)")
+        }
+        await refreshURLFilter()
+    }
+
+    /// Removes the URL filter's configuration from the device altogether.
+    func removeURLFilter() async {
+        guard #available(iOS 26.0, *) else { return }
+        let manager = NEURLFilterManager.shared
+        do {
+            try await manager.loadFromPreferences()
+            try await manager.removeFromPreferences()
+            Self.log.notice("URL filter: configuration removed")
+        } catch {
+            Self.log.error("URL filter: could not remove configuration: \(String(describing: error), privacy: .public)")
+        }
+        await refreshURLFilter()
+    }
+
+    /// Throws away what the system has cached from the lookup server.
+    func resetURLFilterCache() async {
+        guard #available(iOS 26.0, *) else { return }
+        let manager = NEURLFilterManager.shared
+        do {
+            try await manager.loadFromPreferences()
+            try await manager.resetPIRCache()
+            Self.log.notice("URL filter: lookup cache reset")
+        } catch {
+            Self.log.error("URL filter: could not reset the lookup cache: \(String(describing: error), privacy: .public)")
+        }
+        await refreshURLFilter()
+    }
+
+    /// Saving a configuration that is already in place is reported as an error; it is not one.
+    @available(iOS 26.0, *)
+    private func saveURLFilter(_ manager: NEURLFilterManager) async throws {
+        do {
+            try await manager.saveToPreferences()
+        } catch {
+            if String(describing: error).contains("configurationUnchanged") { return }
+            throw error
+        }
     }
 
     private func refreshFilter() async {
