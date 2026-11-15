@@ -2,18 +2,19 @@
 # Makes a copy of the profile with a random removal password, and puts the
 # password on paper (or in a file) without showing it on screen.
 #
-# Usage:
-#   tools/set-removal-password.sh [template.mobileconfig]            # print it
-#   tools/set-removal-password.sh --to-file [template.mobileconfig]  # no printer
+# Keep this script in the same folder as no-shortform.mobileconfig, then in
+# Terminal on the Mac:
+#   bash ~/Downloads/set-removal-password.sh             # prints the password
+#   bash ~/Downloads/set-removal-password.sh --to-file   # no printer
 #
-# Output: no-shortform.locked.mobileconfig next to the template. Install that
+# Output: no-shortform.locked.mobileconfig in the same folder. Install that
 # with Apple Configurator, then delete it: the password is readable inside it.
 # Uses only tools built into macOS (openssl, plutil, lpr).
 
 set -euo pipefail
 TO_FILE=0
 if [ "${1:-}" = "--to-file" ]; then TO_FILE=1; shift; fi
-TEMPLATE="${1:-$(dirname "$0")/../Profile/no-shortform.mobileconfig}"
+TEMPLATE="${1:-$(dirname "$0")/no-shortform.mobileconfig}"
 PLACEHOLDER="CHANGE_ME_REMOVAL_PASSWORD"
 
 [ -f "$TEMPLATE" ] || { echo "Profile not found: $TEMPLATE" >&2; exit 2; }

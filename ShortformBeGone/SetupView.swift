@@ -16,18 +16,19 @@ struct SetupView: View {
                         .font(.subheadline)
                 }
 
-                Section("You will need") {
-                    ForEach(SetupGuide.requirements, id: \.self) { item in
-                        Label(item, systemImage: "checkmark")
-                            .font(.subheadline)
-                    }
-                }
-
                 Section("Steps") {
                     ForEach(Array(SetupGuide.steps.enumerated()), id: \.element.id) { index, step in
                         NavigationLink(value: step) {
                             StepRow(number: index + 1, step: step, isDone: isDone(step))
                         }
+                    }
+                }
+
+                Section("You will need") {
+                    ForEach(SetupGuide.requirements, id: \.self) { item in
+                        Label(item, systemImage: "circle.fill")
+                            .labelStyle(BulletLabelStyle())
+                            .font(.subheadline)
                     }
                 }
 
@@ -59,6 +60,18 @@ struct SetupView: View {
                 completedSteps = ids.sorted().joined(separator: ",")
             }
         )
+    }
+}
+
+private struct BulletLabelStyle: LabelStyle {
+    func makeBody(configuration: Configuration) -> some View {
+        HStack(alignment: .firstTextBaseline, spacing: 10) {
+            configuration.icon
+                .font(.system(size: 6))
+                .foregroundStyle(.secondary)
+                .accessibilityHidden(true)
+            configuration.title
+        }
     }
 }
 
@@ -97,6 +110,16 @@ struct SetupStepView: View {
                 }
             }
 
+            if step.offersProfile, !ProfileFile.urls.isEmpty {
+                Section {
+                    ShareLink(items: ProfileFile.urls) {
+                        Label("Send the profile to your Mac", systemImage: "square.and.arrow.up")
+                    }
+                } footer: {
+                    Text("Sends two files: the profile template and a script that locks it. The template has no password until you run the script on the Mac.")
+                }
+            }
+
             ForEach(step.sections, id: \.self) { section in
                 Section {
                     ForEach(Array(section.items.enumerated()), id: \.offset) { index, item in
@@ -113,16 +136,6 @@ struct SetupStepView: View {
                 }
             }
 
-            if step.offersProfile, let profile = ProfileFile.url {
-                Section {
-                    ShareLink(item: profile) {
-                        Label("Send the profile to your Mac", systemImage: "square.and.arrow.up")
-                    }
-                } footer: {
-                    Text("This is a template. It has no password until you run the script on the Mac, so it is safe to share.")
-                }
-            }
-
             Section {
                 Toggle("I have done this step", isOn: $isDone)
             }
@@ -133,8 +146,12 @@ struct SetupStepView: View {
 }
 
 enum ProfileFile {
-    static var url: URL? {
-        Bundle.main.url(forResource: "no-shortform", withExtension: "mobileconfig")
+    /// The profile template and the script that sets its removal password.
+    static var urls: [URL] {
+        [
+            Bundle.main.url(forResource: "no-shortform", withExtension: "mobileconfig"),
+            Bundle.main.url(forResource: "set-removal-password", withExtension: "sh"),
+        ].compactMap { $0 }
     }
 }
 

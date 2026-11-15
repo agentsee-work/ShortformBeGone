@@ -103,13 +103,12 @@ enum SetupGuide {
             warning: nil,
             sections: [
                 .init(heading: "Get the files to the Mac", items: [
-                    "Send the profile below to your Mac with AirDrop.",
-                    "Download the two helper scripts from the project page (see About).",
+                    "Send the profile and its script to your Mac with AirDrop, using the button above. Both arrive in Downloads.",
                 ]),
                 .init(heading: "On the Mac", items: [
                     "Open the profile in a text editor and delete the lines for any apps you need to keep. LinkedIn and Threads are marked optional.",
-                    "Run set-removal-password.sh. It creates a locked copy of the profile with a random password and prints the password without showing it.",
-                    "In Apple Configurator, select the device, then Add → Profiles, and choose the locked copy.",
+                    "Open Terminal and run: bash ~/Downloads/set-removal-password.sh — it creates a locked copy of the profile with a random password and prints the password on paper without showing it. No printer? Add --to-file to the end.",
+                    "In Apple Configurator, select the device, then Add → Profiles, and choose no-shortform.locked.mobileconfig.",
                 ]),
                 .init(heading: "Check, then hand over", items: [
                     "Settings → General → VPN & Device Management should list “No Short-Form Video” and a content filter.",

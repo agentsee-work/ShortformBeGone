@@ -2,7 +2,9 @@
 //  ShortformBeGoneUITests.swift
 //  ShortformBeGoneUITests
 //
-//  Created by James Hartt on 15/11/2026.
+//  Walks every screen. When SCREENSHOT_DIR is set (pass it to xcodebuild as
+//  TEST_RUNNER_SCREENSHOT_DIR), each screen is also saved there as a PNG,
+//  which is how the App Store screenshots are made: see tools/screenshots.sh.
 //
 
 import XCTest
@@ -10,34 +12,77 @@ import XCTest
 final class ShortformBeGoneUITests: XCTestCase {
 
     override func setUpWithError() throws {
-        // Put setup code here. This method is called before the invocation of each test method in the class.
-
-        // In UI tests it is usually best to stop immediately when a failure occurs.
         continueAfterFailure = false
-
-        // In UI tests it’s important to set the initial state - such as interface orientation - required for your tests before they run. The setUp method is a good place to do this.
-    }
-
-    override func tearDownWithError() throws {
-        // Put teardown code here. This method is called after the invocation of each test method in the class.
     }
 
     @MainActor
-    func testExample() throws {
-        // UI tests must launch the application that they test.
+    private func launch(demoState: String) -> XCUIApplication {
         let app = XCUIApplication()
+        app.launchArguments = ["-demoState", demoState, "-resetSetupProgress", "YES"]
         app.launch()
-
-        // Use XCTAssert and related functions to verify your tests produce the correct results.
-        // XCUIAutomation Documentation
-        // https://developer.apple.com/documentation/xcuiautomation
+        return app
     }
 
     @MainActor
-    func testLaunchPerformance() throws {
-        // This measures how long it takes to launch your application.
-        measure(metrics: [XCTApplicationLaunchMetric()]) {
-            XCUIApplication().launch()
-        }
+    private func snapshot(_ name: String) {
+        guard let directory = ProcessInfo.processInfo.environment["SCREENSHOT_DIR"], !directory.isEmpty else { return }
+        let url = URL(fileURLWithPath: directory).appendingPathComponent(name + ".png")
+        try? FileManager.default.createDirectory(atPath: directory, withIntermediateDirectories: true)
+        try? XCUIScreen.main.screenshot().pngRepresentation.write(to: url)
+    }
+
+    @MainActor
+    func testWalkthroughWhenFilterIsActive() throws {
+        let app = launch(demoState: "active")
+
+        XCTAssertTrue(app.staticTexts["Short-form video is blocked"].waitForExistence(timeout: 10))
+        XCTAssertFalse(app.buttons["Open the setup guide"].exists)
+        snapshot("1-status")
+
+        app.tabBars.buttons["Rules"].tap()
+        XCTAssertTrue(app.staticTexts["tiktok.com"].waitForExistence(timeout: 5))
+        let field = app.textFields["test-address"]
+        field.tap()
+        field.typeText("youtube.com/watch?v=abc")
+        XCTAssertTrue(app.staticTexts["Allowed"].waitForExistence(timeout: 5))
+
+        let entered = "youtube.com/watch?v=abc"
+        field.typeText(String(repeating: XCUIKeyboardKey.delete.rawValue, count: entered.count))
+        field.typeText("m.youtube.com/shorts/abc\n") // return dismisses the keyboard, which covers the tab bar
+        XCTAssertTrue(app.staticTexts["Blocked"].waitForExistence(timeout: 5))
+        XCTAssertTrue(app.staticTexts["by rule youtube.com/shorts"].exists)
+        snapshot("2-rules-blocked")
+
+        app.tabBars.buttons["Setup"].tap()
+        XCTAssertTrue(app.staticTexts["Supervise this device"].waitForExistence(timeout: 5))
+        snapshot("3-setup")
+
+        app.staticTexts["Install the profile"].tap()
+        XCTAssertTrue(app.buttons["Send the profile to your Mac"].waitForExistence(timeout: 5))
+        snapshot("4-install-profile")
+
+        app.swipeUp()
+        let done = app.switches["I have done this step"]
+        XCTAssertTrue(done.waitForExistence(timeout: 5))
+        done.switches.firstMatch.tap()
+        XCTAssertEqual(done.value as? String, "1")
+        app.navigationBars.buttons.firstMatch.tap()
+        // The step's row now reads "Done" in place of its number.
+        let doneRow = app.buttons.matching(NSPredicate(format: "label BEGINSWITH 'Done' AND label CONTAINS 'Install the profile'")).firstMatch
+        XCTAssertTrue(doneRow.waitForExistence(timeout: 5))
+    }
+
+    @MainActor
+    func testNotSetUpPointsToTheSetupGuide() throws {
+        let app = launch(demoState: "notInstalled")
+
+        XCTAssertTrue(app.staticTexts["Not set up yet"].waitForExistence(timeout: 10))
+        snapshot("5-not-set-up")
+        app.buttons["Open the setup guide"].tap()
+        XCTAssertTrue(app.staticTexts["Get ready"].waitForExistence(timeout: 5))
+
+        app.swipeUp()
+        app.staticTexts["About and privacy"].tap()
+        XCTAssertTrue(app.staticTexts["Version"].waitForExistence(timeout: 5))
     }
 }
