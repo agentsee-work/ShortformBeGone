@@ -34,6 +34,30 @@ final class FilterStatusModel {
 
     private static let log = Logger(subsystem: "shortformfilter", category: "app")
 
+    /// The system URL filter (iOS 26 and later). Prototype: it needs a lookup
+    /// server, whose address is baked into the build as SBG_PIR_SERVER_URL.
+    enum URLFilterState: Equatable {
+        /// This build has no lookup server, or the system is too old.
+        case unavailable
+        case notConfigured
+        case stopped
+        case starting
+        case running
+        case failed(String)
+    }
+
+    private(set) var urlFilter: URLFilterState = .unavailable
+
+    /// The lookup server this build was made for, if any.
+    static var lookupServerURL: URL? {
+        guard let configuration = Bundle.main.object(forInfoDictionaryKey: "NSPIRConfiguration") as? [String: Any],
+              let text = configuration["PIRServerURL"] as? String, !text.isEmpty else { return nil }
+        return URL(string: text)
+    }
+
+    /// Must match a token in the lookup server's service-config.json.
+    private static let lookupServerToken = "AAAA"
+
     static let safariBlockerIdentifier = (Bundle.main.bundleIdentifier ?? "") + ".SafariBlocker"
 
     private(set) var state: State = .checking
@@ -45,6 +69,7 @@ final class FilterStatusModel {
     func refresh() async {
         await refreshSafariBlocker()
         await refreshFilter()
+        await refreshURLFilter()
     }
 
     /// Gives Safari the current rule list and reads whether the blocker is switched on.
@@ -64,6 +89,59 @@ final class FilterStatusModel {
             safariBlocker = .failed(error.localizedDescription)
             Self.log.error("Safari blocker failed to load: \(String(describing: error), privacy: .public)")
         }
+    }
+
+    private func refreshURLFilter() async {
+        guard #available(iOS 26.0, *), Self.lookupServerURL != nil else {
+            urlFilter = .unavailable
+            return
+        }
+        let manager = NEURLFilterManager.shared
+        do {
+            try await manager.loadFromPreferences()
+        } catch {
+            Self.log.notice("URL filter: nothing to load (\(String(describing: error), privacy: .public))")
+            urlFilter = .notConfigured
+            return
+        }
+        let status = await manager.status
+        let lastError = await manager.lastDisconnectError
+        Self.log.notice("URL filter: enabled \(manager.isEnabled, privacy: .public), status \(status.rawValue, privacy: .public), last error \(String(describing: lastError), privacy: .public), server \(manager.pirServerURL?.absoluteString ?? "-", privacy: .public)")
+        switch status {
+        case .running: urlFilter = .running
+        case .starting: urlFilter = .starting
+        case .stopped, .stopping:
+            if let lastError { urlFilter = .failed(String(describing: lastError)) } else { urlFilter = manager.isEnabled ? .stopped : .notConfigured }
+        case .invalid: urlFilter = .notConfigured
+        @unknown default: urlFilter = .notConfigured
+        }
+    }
+
+    /// Points the system URL filter at the lookup server and switches it on.
+    /// The system asks the person to allow it and to enter the device passcode.
+    func turnOnURLFilter() async {
+        guard #available(iOS 26.0, *), let server = Self.lookupServerURL else { return }
+        let manager = NEURLFilterManager.shared
+        do {
+            try? await manager.loadFromPreferences()
+            try manager.setConfiguration(
+                pirServerURL: server,
+                pirPrivacyPassIssuerURL: server,
+                pirAuthenticationToken: Self.lookupServerToken,
+                controlProviderBundleIdentifier: (Bundle.main.bundleIdentifier ?? "") + ".URLFilter"
+            )
+            // If the lookup server cannot be reached, block possible matches rather than let them through.
+            manager.shouldFailClosed = true
+            manager.prefilterFetchInterval = 2700
+            manager.isEnabled = true
+            try await manager.saveToPreferences()
+            Self.log.notice("URL filter: configuration saved")
+        } catch {
+            Self.log.error("URL filter: could not save configuration: \(String(describing: error), privacy: .public)")
+            urlFilter = .failed(String(describing: error))
+            return
+        }
+        await refreshURLFilter()
     }
 
     private func refreshFilter() async {

@@ -45,6 +45,21 @@ struct StatusView: View {
                         Label("Safari blocker", systemImage: "safari")
                     }
                     .accessibilityIdentifier("safari-blocker-row")
+                    if filter.urlFilter != .unavailable {
+                        LabeledContent {
+                            Text(urlFilterText).foregroundStyle(filter.urlFilter == .running ? .green : .orange)
+                        } label: {
+                            Label("URL filter (prototype)", systemImage: "link.badge.plus")
+                        }
+                        if filter.urlFilter != .running && filter.urlFilter != .starting {
+                            Button("Turn on the URL filter") {
+                                Task { await filter.turnOnURLFilter() }
+                            }
+                        }
+                        if case .failed(let reason) = filter.urlFilter {
+                            Text(reason).font(.footnote).foregroundStyle(.secondary)
+                        }
+                    }
                 } header: {
                     Text("Layers")
                 } footer: {
@@ -84,6 +99,17 @@ struct StatusView: View {
         case .active: "On"
         case .disabled: "Off"
         case .notInstalled: "Not set up"
+        }
+    }
+
+    private var urlFilterText: String {
+        switch filter.urlFilter {
+        case .unavailable: "Unavailable"
+        case .notConfigured: "Not set up"
+        case .stopped: "Stopped"
+        case .starting: "Starting…"
+        case .running: "On"
+        case .failed: "Problem"
         }
     }
 

@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<!-- Where the system URL filter sends its private lookups. Empty unless the
+	     build sets SBG_PIR_SERVER_URL; see tools/url-filter/README.md. -->
+	<key>NSPIRConfiguration</key>
+	<dict>
+		<key>PIRServerURL</key>
+		<string>$(SBG_PIR_SERVER_URL)</string>
+	</dict>
+</dict>
+</plist>
