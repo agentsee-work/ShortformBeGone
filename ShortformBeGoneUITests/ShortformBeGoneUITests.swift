@@ -23,6 +23,17 @@ final class ShortformBeGoneUITests: XCTestCase {
         return app
     }
 
+    /// iPhone has a tab bar; iPad shows the tabs as plain buttons at the top.
+    @MainActor
+    private func openTab(_ name: String, in app: XCUIApplication) {
+        let inTabBar = app.tabBars.buttons[name]
+        if inTabBar.exists {
+            inTabBar.tap()
+        } else {
+            app.buttons[name].firstMatch.tap()
+        }
+    }
+
     @MainActor
     private func snapshot(_ name: String) {
         guard let directory = ProcessInfo.processInfo.environment["SCREENSHOT_DIR"], !directory.isEmpty else { return }
@@ -39,7 +50,7 @@ final class ShortformBeGoneUITests: XCTestCase {
         XCTAssertFalse(app.buttons["Open the setup guide"].exists)
         snapshot("1-status")
 
-        app.tabBars.buttons["Rules"].tap()
+        openTab("Rules", in: app)
         XCTAssertTrue(app.staticTexts["tiktok.com"].waitForExistence(timeout: 5))
         let field = app.textFields["test-address"]
         field.tap()
@@ -53,7 +64,7 @@ final class ShortformBeGoneUITests: XCTestCase {
         XCTAssertTrue(app.staticTexts["by rule youtube.com/shorts"].exists)
         snapshot("2-rules-blocked")
 
-        app.tabBars.buttons["Setup"].tap()
+        openTab("Setup", in: app)
         XCTAssertTrue(app.staticTexts["Supervise this device"].waitForExistence(timeout: 5))
         snapshot("3-setup")
 

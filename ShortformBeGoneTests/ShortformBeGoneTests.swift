@@ -93,4 +93,16 @@ struct FilterRulesTests {
         #expect(hostsOnly.denyHosts == ["reddit.com"])
         #expect(hostsOnly.denyPaths == FilterRules.standard.denyPaths)
     }
+
+    /// The profile template shipped in the app must carry the same rules as the built-in list.
+    @Test func bundledProfileMatchesStandardRules() throws {
+        let url = try #require(Bundle.main.url(forResource: "no-shortform", withExtension: "mobileconfig"))
+        let profile = try #require(try PropertyListSerialization.propertyList(from: Data(contentsOf: url), format: nil) as? [String: Any])
+        let payloads = try #require(profile["PayloadContent"] as? [[String: Any]])
+        let filter = try #require(payloads.first { $0["PayloadType"] as? String == "com.apple.webcontent-filter" })
+
+        #expect(filter["PluginBundleID"] as? String == Bundle.main.bundleIdentifier)
+        #expect(FilterRules(vendorConfiguration: filter["VendorConfig"] as? [String: Any]) == .standard)
+        #expect(payloads.contains { $0["RemovalPassword"] as? String == "CHANGE_ME_REMOVAL_PASSWORD" })
+    }
 }
