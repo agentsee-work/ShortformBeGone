@@ -3,3 +3,5 @@ xcuserdata/
 DerivedData/
 build/
 *.xcresult
+*.locked.mobileconfig
+removal-password.txt

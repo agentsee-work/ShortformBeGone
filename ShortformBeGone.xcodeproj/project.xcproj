@@ -12,6 +12,7 @@
   },
   "files": [
     { "kind": "folder", "path": "ShortformBeGone", "target-membership": [ "ShortformBeGone" ] },
+    { "kind": "folder", "path": "Profile", "target-membership": [ "ShortformBeGone" ] },
     { "kind": "folder", "path": "Shared", "target-membership": [ "ShortformBeGone", "ShortformBeGoneFilterControl", "ShortformBeGoneFilterData" ] },
     {
       "kind": "folder",
