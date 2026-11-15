@@ -151,6 +151,7 @@ enum SetupGuide {
                     "It behaves the same on Wi-Fi and mobile data.",
                 ]),
                 .init(heading: "Known gaps", items: [
+                    "Rules for a section of a site, such as youtube.com/shorts, catch a fresh visit but can be bypassed from inside the site once it is already open. Rules for whole sites cannot. To be certain about a site, block all of it in the profile.",
                     "A full restore from a computer removes everything. That takes over an hour, which is the point, and means you can never be locked out for good.",
                     "Video played inline inside other apps, such as chat or news apps, is not covered.",
                     "If the filter stops unexpectedly, traffic may pass until it restarts.",

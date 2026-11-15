@@ -25,6 +25,14 @@ struct ContentView: View {
                 .tag(Tab.setup)
         }
         .task { await filter.refresh() }
+        #if DEBUG
+        .task {
+            // `-openURL <address>` opens it in Safari, to test the filter from the Mac.
+            if let text = UserDefaults.standard.string(forKey: "openURL"), let url = URL(string: text) {
+                await UIApplication.shared.open(url)
+            }
+        }
+        #endif
         .onChange(of: scenePhase) { _, phase in
             if phase == .active {
                 Task { await filter.refresh() }

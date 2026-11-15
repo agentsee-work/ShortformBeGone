@@ -87,7 +87,7 @@ Blocked apps gone and not installable; other browsers not installable; profile r
 ## Known gaps
 
 - **Full restore from a computer** removes everything. Deliberate: you can never be locked out for good.
-- **In-page navigation:** WebKit may not pass every background request to the filter. If Shorts still play from inside youtube.com, add `youtube.com` to `DenyHosts` or accept the gap.
+- **Section rules only see the first request on each connection.** Measured on iOS 27.2: the filter is shown one address per connection, not per page. A fresh visit to `youtube.com/shorts` is blocked. But once Safari already has a connection open to the same site (you were just on the YouTube home page, say), opening or tapping into Shorts reuses it and the filter is never asked. The same applies to the Instagram and Facebook section rules. Whole-site rules (`DenyHosts`) do not have this gap. To close it for a site, add it to `DenyHosts` and lose the rest of that site too.
 - **Inline video in other apps** (chat, news) isn't covered.
 - **Filter failure:** if the extension crashes, traffic may pass until it restarts.
 - **New apps** aren't in the list until you add their bundle ID and domain.
