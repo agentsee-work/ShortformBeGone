@@ -103,9 +103,29 @@ configuration), `check` (wait until running, then log the system's verdict for
 a set of addresses; 3 is deny, 2 is allow), `parse-hier|seg1|seg3|noquery|default`
 (how addresses are split into lookup keys).
 
+### Lock test with a profile (same day)
+
+Installed `build/url-filter-test.mobileconfig` (a `com.apple.webcontent-filter`
+payload with `FilterURLs` and `URLFilterParameters`) beside the main profile.
+Installing it from Apple Configurator needed a confirmation on the phone.
+
+- The profile switches the URL filter on by itself; the app did not have to.
+  It ran alongside the main profile's network filter.
+- **The profile cannot carry the address-splitting setting.** Apple documents
+  no key for it, and the profile-installed filter came up matching exact
+  addresses only. The app can set `urlParsingConfiguration` on the
+  profile-installed configuration and save it, after which the sections match
+  again. So the app has to do this once after the profile is installed.
+- **The profile does not protect the filter from the app.** With the profile
+  installed, the app's own calls switched the filter off and then removed its
+  configuration; the profile stayed listed while nothing was being filtered.
+  Removing and reinstalling the profile brought the filter back. A release
+  build must therefore have no way to switch it off.
+- Not yet checked: whether Settings lets the person switch off or delete a
+  profile-installed URL filter.
+
 ### Still open
 
-- Whether a profile-delivered URL filter removes the off switch, and whether a
-  profile can carry the address-splitting setting.
+- Whether Settings offers an off switch for a profile-installed URL filter.
 - How often lookups time out in ordinary use.
 - Sharing this needs hosted lookup servers and Apple's approval.

@@ -55,7 +55,7 @@ cat > "$OUT" <<PLIST
 				<key>PIRAuthenticationToken</key>
 				<string>AAAA</string>
 				<key>URLFilterFailClosed</key>
-				<true/>
+				<false/>
 				<key>URLPrefilterFetchFrequency</key>
 				<integer>2700</integer>
 			</dict>
