@@ -44,10 +44,13 @@ enum SetupGuide {
                 .init(heading: nil, items: [
                     "Open Settings → Apps → Safari → Extensions.",
                     "Tap ShortformBeGone and switch it on.",
+                    "Go back, tap ShortformBeGone Guard and switch it on too.",
+                    "On the Guard's screen, set youtube.com, facebook.com, instagram.com and snapchat.com to Allow. Without this Safari will not run it.",
                     "Come back here. The Status tab should show the Safari blocker as On.",
                 ]),
                 .init(heading: "What this does and does not do", items: [
-                    "It blocks the short-form sections of sites in Safari, even from inside a site that is already open.",
+                    "The blocker refuses the short-form sections of sites in Safari and hides the links into them.",
+                    "The Guard covers what the blocker cannot. YouTube and Facebook open a Short or a Reel without loading a new page, so there is nothing to refuse. The Guard watches the address on those sites and takes you back to the home page.",
                     "By itself it is not a lock: it can be switched off in Settings, and it does not cover apps. The remaining steps add the lock.",
                 ]),
             ]
@@ -169,7 +172,7 @@ enum SetupGuide {
                     "It behaves the same on Wi-Fi and mobile data.",
                 ]),
                 .init(heading: "Known gaps", items: [
-                    "The Safari blocker can be switched off in Settings → Apps → Safari → Extensions. If you do that, Shorts and Reels come back inside sites that are already open.",
+                    "The Safari blocker and the Guard can be switched off in Settings → Apps → Safari → Extensions. If you do that, Shorts and Reels come back inside sites that are already open.",
                     "A full restore from a computer removes everything. That takes over an hour, which is the point, and means you can never be locked out for good.",
                     "Video played inline inside other apps, such as chat or news apps, is not covered.",
                     "If the filter stops unexpectedly, traffic may pass until it restarts.",

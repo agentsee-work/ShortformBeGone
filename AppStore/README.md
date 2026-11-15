@@ -50,7 +50,7 @@ IN THE APP
 • Setup: the full guide, and the profile ready to send to your Mac
 
 PRIVATE BY DESIGN
-Safari applies the blocking rules itself; the app never sees what you browse. The content filter checks each address against a list on your device and keeps no history. No account, no analytics, no ads, no purchases. Nothing leaves your device.
+Safari applies the blocking rules itself; the app never sees what you browse. The Guard reads only the address, only on the four sites it covers, and keeps nothing. The content filter checks each address against a list on your device and keeps no history. No account, no analytics, no ads, no purchases. Nothing leaves your device.
 
 Free, and staying free.
 ```
@@ -70,12 +70,13 @@ Paste into "Notes" under App Review Information:
 ShortformBeGone blocks short-form video (Reels, Shorts, TikTok-style feeds) for people who want it off their own device.
 
 TO TEST ON ANY DEVICE, NO SIGN-IN:
-1. Open Settings > Apps > Safari > Extensions > ShortformBeGone and switch it on.
+1. Open Settings > Apps > Safari > Extensions. Switch on ShortformBeGone, and ShortformBeGone Guard (allow it for youtube.com).
 2. In Safari, open youtube.com/shorts or instagram.com/reels: they do not load. youtube.com/watch?v=... still plays.
 3. In the app, the Status tab shows "Safari blocker: On". The Rules tab lists the rules; type "youtube.com/shorts/abc" into "Test an address" to see it matched.
 
 The app has two parts:
 - A Safari content blocker extension. Works on any device, as above.
+- A Safari web extension ("Guard") with one content script and no background page. On youtube.com, instagram.com, facebook.com and snapchat.com it reads the page address and returns to the site's home page when the address is a short-form section opened without a page load. It collects and sends nothing.
 - A network content filter (NEFilterDataProvider + NEFilterControlProvider). As documented in TN3134, this only runs on a supervised device, where it is enabled by a com.apple.webcontent-filter configuration profile. The app never calls NEFilterManager.saveToPreferences. On a review device the Status tab reports it as "Not set up", which is expected.
 
 The Setup tab is a guide to supervising one's own device. Its "Install the profile" step shares the configuration profile template (bundled in the app) and a small shell script that the user runs on their own Mac to set the profile's removal password. The script is never executed on the device.
