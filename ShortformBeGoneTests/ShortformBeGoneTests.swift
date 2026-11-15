@@ -105,4 +105,32 @@ struct FilterRulesTests {
         #expect(FilterRules(vendorConfiguration: filter["VendorConfig"] as? [String: Any]) == .standard)
         #expect(payloads.contains { $0["RemovalPassword"] as? String == "CHANGE_ME_REMOVAL_PASSWORD" })
     }
+
+    @Test func contentBlockerRulesCoverEveryFilterRule() throws {
+        let list = ContentBlockerRules.rules()
+        let filters = list.compactMap { ($0["trigger"] as? [String: Any])?["url-filter"] as? String }
+        func isBlocked(_ url: String) -> Bool {
+            list.contains { rule in
+                guard (rule["action"] as? [String: Any])?["type"] as? String == "block",
+                      let pattern = (rule["trigger"] as? [String: Any])?["url-filter"] as? String,
+                      let regex = try? NSRegularExpression(pattern: pattern, options: .caseInsensitive) else { return false }
+                return regex.firstMatch(in: url, range: NSRange(url.startIndex..., in: url)) != nil
+            }
+        }
+
+        #expect(filters.count == list.count)
+        #expect(isBlocked("https://m.youtube.com/shorts/abc"))
+        #expect(isBlocked("https://m.youtube.com/youtubei/v1/reel/reel_item_watch?prettyPrint=false"))
+        #expect(isBlocked("https://www.instagram.com/reels/"))
+        #expect(isBlocked("https://tiktok.com"))
+        #expect(isBlocked("https://www.tiktok.com/@someone"))
+        #expect(!isBlocked("https://m.youtube.com/watch?v=abc"))
+        #expect(!isBlocked("https://m.youtube.com/youtubei/v1/player"))
+        #expect(!isBlocked("https://nottiktok.com/"))
+        #expect(!isBlocked("https://tiktok.com.example.org/"))
+
+        // Safari rejects the whole list if it is not valid JSON.
+        let decoded = try JSONSerialization.jsonObject(with: ContentBlockerRules.json())
+        #expect((decoded as? [[String: Any]])?.count == list.count)
+    }
 }

@@ -33,6 +33,24 @@ struct StatusView: View {
                     .accessibilityIdentifier("status-summary")
                 }
 
+                Section {
+                    LabeledContent {
+                        Text(networkFilterText).foregroundStyle(filter.state == .active ? .green : .secondary)
+                    } label: {
+                        Label("Network filter", systemImage: "network.badge.shield.half.filled")
+                    }
+                    LabeledContent {
+                        Text(safariBlockerText).foregroundStyle(filter.safariBlocker == .on ? .green : .orange)
+                    } label: {
+                        Label("Safari blocker", systemImage: "safari")
+                    }
+                    .accessibilityIdentifier("safari-blocker-row")
+                } header: {
+                    Text("Layers")
+                } footer: {
+                    Text(layersFooter)
+                }
+
                 if filter.state == .active || filter.state == .disabled {
                     Section("In force") {
                         LabeledContent("Blocked sites", value: "\(filter.rules.denyHosts.count)")
@@ -57,6 +75,35 @@ struct StatusView: View {
             }
             .navigationTitle("ShortformBeGone")
             .refreshable { await filter.refresh() }
+        }
+    }
+
+    private var networkFilterText: String {
+        switch filter.state {
+        case .checking: "Checking…"
+        case .active: "On"
+        case .disabled: "Off"
+        case .notInstalled: "Not set up"
+        }
+    }
+
+    private var safariBlockerText: String {
+        switch filter.safariBlocker {
+        case .checking: "Checking…"
+        case .on: "On"
+        case .off: "Off"
+        case .failed: "Problem"
+        }
+    }
+
+    private var layersFooter: String {
+        switch filter.safariBlocker {
+        case .off:
+            "Switch the Safari blocker on in Settings → Apps → Safari → Extensions → ShortformBeGone. It blocks Shorts and Reels inside sites that are already open, which the network filter cannot see."
+        case .failed(let reason):
+            "Safari could not load the blocker: \(reason)"
+        default:
+            "The network filter blocks whole sites for every app. The Safari blocker blocks the short-form sections inside sites you keep."
         }
     }
 

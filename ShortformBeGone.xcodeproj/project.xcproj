@@ -13,7 +13,7 @@
   "files": [
     { "kind": "folder", "path": "ShortformBeGone", "target-membership": [ "ShortformBeGone" ] },
     { "kind": "folder", "path": "Profile", "target-membership": [ "ShortformBeGone" ] },
-    { "kind": "folder", "path": "Shared", "target-membership": [ "ShortformBeGone", "ShortformBeGoneFilterControl", "ShortformBeGoneFilterData" ] },
+    { "kind": "folder", "path": "Shared", "target-membership": [ "ShortformBeGone", "ShortformBeGoneFilterControl", "ShortformBeGoneFilterData", "ShortformBeGoneSafariBlocker" ] },
     {
       "kind": "folder",
       "path": "ShortformBeGoneFilterData",
@@ -42,6 +42,20 @@
           ],
         },
       ],
+    }, {
+      "kind": "folder",
+      "path": "ShortformBeGoneSafariBlocker",
+      "target-membership": [
+        "ShortformBeGoneSafariBlocker",
+      ],
+      "membership-exceptions": [
+        {
+          "target": "ShortformBeGoneSafariBlocker",
+          "exclusions": [
+            "Info.plist",
+          ],
+        },
+      ],
     },
     { "kind": "folder", "path": "ShortformBeGoneTests", "target-membership": [ "ShortformBeGoneTests" ] },
     { "kind": "folder", "path": "ShortformBeGoneUITests", "target-membership": [ "ShortformBeGoneUITests" ] },
@@ -52,6 +66,7 @@
         { "path": "<PRODUCTS>/ShortformBeGone.app", "id": "EDE5215B30A9DAD800506A30", "type": "wrapper.application", "index": false },
         { "path": "<PRODUCTS>/ShortformBeGoneFilterData.appex", "id": "EDE5300130A9DAD900506A30", "type": "wrapper.app-extension", "index": false, "target-membership": [ "ShortformBeGone/copy/Embed Foundation Extensions" ] },
         { "path": "<PRODUCTS>/ShortformBeGoneFilterControl.appex", "id": "EDE5300230A9DAD900506A30", "type": "wrapper.app-extension", "index": false, "target-membership": [ "ShortformBeGone/copy/Embed Foundation Extensions" ] },
+        { "path": "<PRODUCTS>/ShortformBeGoneSafariBlocker.appex", "id": "EDE5300630A9DAD900506A30", "type": "wrapper.app-extension", "index": false, "target-membership": [ "ShortformBeGone/copy/Embed Foundation Extensions" ] },
         { "path": "<PRODUCTS>/ShortformBeGoneTests.xctest", "id": "EDE5216830A9DAD900506A30", "type": "wrapper.cfbundle", "index": false },
         { "path": "<PRODUCTS>/ShortformBeGoneUITests.xctest", "id": "EDE5217230A9DAD900506A30", "type": "wrapper.cfbundle", "index": false },
       ],
@@ -66,6 +81,7 @@
       "dependencies": [
         "ShortformBeGoneFilterData",
         "ShortformBeGoneFilterControl",
+        "ShortformBeGoneSafariBlocker",
       ],
       "build-phases": [
         "compile-sources",
@@ -168,6 +184,39 @@
         ],
         "MARKETING_VERSION": "1.0",
         "PRODUCT_BUNDLE_IDENTIFIER": "agentsee.ShortformBeGone.FilterControl",
+        "PRODUCT_NAME": "$(TARGET_NAME)",
+        "SKIP_INSTALL": "YES",
+        "STRING_CATALOG_GENERATE_SYMBOLS": "NO",
+        "SWIFT_APPROACHABLE_CONCURRENCY": "YES",
+        "SWIFT_EMIT_LOC_STRINGS": "YES",
+        "SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY": "YES",
+        "SWIFT_VERSION": "5.0",
+        "TARGETED_DEVICE_FAMILY": "1,2",
+      },
+    }, {
+      "name": "ShortformBeGoneSafariBlocker",
+      "id": "EDE5300730A9DAD900506A30",
+      "product": "Products/ShortformBeGoneSafariBlocker.appex",
+      "product-type": "app-extension",
+      "build-phases": [
+        "compile-sources",
+        "frameworks",
+        "resources",
+      ],
+      "build-settings": {
+        "CODE_SIGN_STYLE": "Automatic",
+        "CURRENT_PROJECT_VERSION": "1",
+        "DEVELOPMENT_TEAM": "ZKU6NYB25L",
+        "GENERATE_INFOPLIST_FILE": "YES",
+        "INFOPLIST_FILE": "ShortformBeGoneSafariBlocker/Info.plist",
+        "INFOPLIST_KEY_CFBundleDisplayName": "ShortformBeGone",
+        "LD_RUNPATH_SEARCH_PATHS": [
+          "$(inherited)",
+          "@executable_path/Frameworks",
+          "@executable_path/../../Frameworks",
+        ],
+        "MARKETING_VERSION": "1.0",
+        "PRODUCT_BUNDLE_IDENTIFIER": "agentsee.ShortformBeGone.SafariBlocker",
         "PRODUCT_NAME": "$(TARGET_NAME)",
         "SKIP_INSTALL": "YES",
         "STRING_CATALOG_GENERATE_SYMBOLS": "NO",

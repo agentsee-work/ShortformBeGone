@@ -6,6 +6,8 @@
 import Foundation
 import NetworkExtension
 import Observation
+import SafariServices
+import os
 
 /// Reads whether the content filter is installed and running on this device.
 @Observable
@@ -21,12 +23,50 @@ final class FilterStatusModel {
         case notInstalled
     }
 
+    enum SafariBlockerState: Equatable {
+        case checking
+        case on
+        /// Installed but not switched on in Settings.
+        case off
+        /// Safari refused the rule list, or could not be asked.
+        case failed(String)
+    }
+
+    private static let log = Logger(subsystem: "shortformfilter", category: "app")
+
+    static let safariBlockerIdentifier = (Bundle.main.bundleIdentifier ?? "") + ".SafariBlocker"
+
     private(set) var state: State = .checking
+    private(set) var safariBlocker: SafariBlockerState = .checking
     /// The rules in force: the profile's when installed, otherwise the standard set.
     private(set) var rules = FilterRules.standard
     private(set) var rulesComeFromProfile = false
 
     func refresh() async {
+        await refreshSafariBlocker()
+        await refreshFilter()
+    }
+
+    /// Gives Safari the current rule list and reads whether the blocker is switched on.
+    private func refreshSafariBlocker() async {
+        #if DEBUG
+        if let demo = UserDefaults.standard.string(forKey: "demoState") {
+            safariBlocker = demo == "active" ? .on : .off
+            return
+        }
+        #endif
+        do {
+            try await SFContentBlockerManager.reloadContentBlocker(withIdentifier: Self.safariBlockerIdentifier)
+            let state = try await SFContentBlockerManager.stateOfContentBlocker(withIdentifier: Self.safariBlockerIdentifier)
+            safariBlocker = state.isEnabled ? .on : .off
+            Self.log.notice("Safari blocker rules loaded; enabled: \(state.isEnabled, privacy: .public)")
+        } catch {
+            safariBlocker = .failed(error.localizedDescription)
+            Self.log.error("Safari blocker failed to load: \(String(describing: error), privacy: .public)")
+        }
+    }
+
+    private func refreshFilter() async {
         #if DEBUG
         // `-demoState active` shows the running state where no filter can run,
         // such as the Simulator. Used for screenshots.
