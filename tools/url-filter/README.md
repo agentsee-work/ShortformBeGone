@@ -57,3 +57,55 @@ Phone on the same Wi-Fi as the Mac, server running.
 6. Lock test: install `build/url-filter-test.mobileconfig` (from `tools/url-filter/make-test-profile.sh`) with Apple Configurator and see whether the URL filter can still be switched off in Settings.
 
 The server log shows a request each time the phone looks something up.
+
+## What the first device test showed (15 November 2026, iPhone 16 Plus, iOS 27.2.1)
+
+**It works, with one limit.**
+
+- The filter starts, fetches its settings from the lookup server and makes
+  lookups. A test page in Safari confirmed that in-page requests to listed
+  addresses are refused even on a connection that is already open, which is
+  what the network filter cannot do. Ordinary YouTube pages, the video player
+  request and other sites load.
+- **The system only looks up the exact address unless told otherwise.** On
+  iOS 27.2 hierarchy enumeration is off by default, so `youtube.com/shorts`
+  did not cover `youtube.com/shorts/<id>`. The app now sets
+  `urlParsingConfiguration` (iOS 27) to enumerate path levels and drop the
+  query. Whole-site entries matched at any depth without it.
+- **The limit: one Short still plays.** Tapping a Short on the YouTube home
+  page loads that video through `/youtubei/v1/player`, the same address every
+  normal video uses, so it cannot be listed. The requests that build the
+  Shorts feed (`/youtubei/v1/reel/...`) are refused, so there is nothing to
+  swipe to. Reproduced in a desktop browser with the same requests blocked.
+  Hiding the Shorts shelf and tab is the Safari blocker's job.
+
+### Things that went wrong, and what to do about them
+
+- **Failing closed blocks all of Safari** whenever the lookup server is out of
+  reach or the filter is restarting. The prototype fails open.
+- **Installing a new build while the filter is on** leaves the system unable
+  to find the extension ("Failed to setup provider", empty identities list in
+  the device log) until the phone is restarted. Switch the filter off, install,
+  switch it on: `-urlFilter off`, install, `-urlFilter on`.
+- **`NEURLFilterManager.status` reads `invalid`** until the system reports a
+  change; follow `handleStatusChange()` instead.
+- **`saveToPreferences()` throws `configurationUnchanged`** when nothing
+  changed. It is not a failure.
+- A few lookups timed out and were let through (three in one test round).
+
+### Driving it from the Mac (debug builds)
+
+    xcrun devicectl device process launch --terminate-existing --device <id> \
+        agentsee.ShortformBeGone -- -urlFilter <command>
+
+`on`, `off`, `reset` (clear the lookup cache), `remove` (delete the
+configuration), `check` (wait until running, then log the system's verdict for
+a set of addresses; 3 is deny, 2 is allow), `parse-hier|seg1|seg3|noquery|default`
+(how addresses are split into lookup keys).
+
+### Still open
+
+- Whether a profile-delivered URL filter removes the off switch, and whether a
+  profile can carry the address-splitting setting.
+- How often lookups time out in ordinary use.
+- Sharing this needs hosted lookup servers and Apple's approval.
