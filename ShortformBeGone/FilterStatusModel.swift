@@ -72,7 +72,7 @@ final class FilterStatusModel {
         await refreshSafariBlocker()
         await refreshFilter()
         #if DEBUG
-        // `-urlFilter on|off|reset|remove` drives the prototype from the Mac.
+        // `-urlFilter on|off|reset|remove|check` drives the prototype from the Mac.
         if !handledURLFilterCommand, let command = UserDefaults.standard.string(forKey: "urlFilter") {
             handledURLFilterCommand = true
             switch command {
@@ -80,6 +80,7 @@ final class FilterStatusModel {
             case "off": await turnOffURLFilter()
             case "reset": await resetURLFilterCache()
             case "remove": await removeURLFilter()
+            case "check": await refreshURLFilter(); await logURLFilterVerdicts()
             default: break
             }
         }
@@ -121,17 +122,40 @@ final class FilterStatusModel {
             urlFilter = .notConfigured
             return
         }
-        let status = await manager.status
-        let lastError = await manager.lastDisconnectError
         urlFilterEnabled = manager.isEnabled
-        Self.log.notice("URL filter: enabled \(manager.isEnabled, privacy: .public), fail closed \(manager.shouldFailClosed, privacy: .public), status \(status.rawValue, privacy: .public), last error \(String(describing: lastError), privacy: .public), server \(manager.pirServerURL?.absoluteString ?? "-", privacy: .public)")
+        let status = await manager.status
+        Self.log.notice("URL filter: enabled \(manager.isEnabled, privacy: .public), fail closed \(manager.shouldFailClosed, privacy: .public), status \(status.rawValue, privacy: .public), server \(manager.pirServerURL?.absoluteString ?? "-", privacy: .public)")
+        await applyURLFilterStatus(status, manager: manager)
+        // The status read directly is "invalid" until the system reports a
+        // change, so the real state arrives through this stream.
+        if urlFilterStatusTask == nil {
+            urlFilterStatusTask = Task { [weak self] in
+                for await status in manager.handleStatusChange() {
+                    Self.log.notice("URL filter: status changed to \(status.rawValue, privacy: .public)")
+                    await self?.applyURLFilterStatus(status, manager: manager)
+                }
+            }
+        }
+    }
+
+    @ObservationIgnored private var urlFilterStatusTask: Task<Void, Never>?
+
+    @available(iOS 26.0, *)
+    private func applyURLFilterStatus(_ status: NEURLFilterManager.Status, manager: NEURLFilterManager) async {
+        guard manager.isEnabled else {
+            urlFilter = manager.pirServerURL == nil ? .notConfigured : .stopped
+            return
+        }
         switch status {
         case .running: urlFilter = .running
-        case .starting: urlFilter = .starting
+        case .starting, .invalid: urlFilter = .starting
         case .stopped, .stopping:
-            if let lastError { urlFilter = .failed(String(describing: lastError)) } else { urlFilter = manager.isEnabled ? .stopped : .notConfigured }
-        case .invalid, _:
-            if manager.isEnabled, let lastError { urlFilter = .failed(String(describing: lastError)) } else { urlFilter = manager.isEnabled ? .stopped : .notConfigured }
+            if let lastError = await manager.lastDisconnectError {
+                urlFilter = .failed(String(describing: lastError))
+            } else {
+                urlFilter = .stopped
+            }
+        @unknown default: urlFilter = .starting
         }
     }
 
@@ -191,6 +215,42 @@ final class FilterStatusModel {
         }
         await refreshURLFilter()
     }
+
+    #if DEBUG
+    /// Asks the system what it would do with a set of addresses, and logs each answer.
+    private func logURLFilterVerdicts() async {
+        guard #available(iOS 26.0, *) else { return }
+        let addresses = [
+            "https://m.youtube.com/shorts",
+            "https://m.youtube.com/shorts/f_dW2euXpFU",
+            "https://www.youtube.com/shorts/f_dW2euXpFU",
+            "https://youtube.com/shorts",
+            "https://m.youtube.com/youtubei/v1/reel/reel_item_watch?prettyPrint=false",
+            "https://m.youtube.com/youtubei/v1/reel/reel_watch_sequence?prettyPrint=false",
+            "https://www.youtube.com/youtubei/v1/reel/reel_item_watch?prettyPrint=false",
+            "https://m.youtube.com/youtubei/v1/reel",
+            "https://m.youtube.com/youtubei/v1/player?prettyPrint=false",
+            "https://m.youtube.com/watch?v=dQw4w9WgXcQ",
+            "https://m.youtube.com/",
+            "https://www.tiktok.com/",
+            "https://www.tiktok.com/@someone/video/1",
+            "https://www.instagram.com/reel/abc/",
+            "https://www.instagram.com/",
+            "https://en.wikipedia.org/wiki/Attention",
+        ]
+        // Launching with this command restarts the filter; wait until it is running.
+        for _ in 0..<60 where urlFilter != .running {
+            try? await Task.sleep(for: .seconds(2))
+        }
+        try? await Task.sleep(for: .seconds(5))
+        Self.log.notice("URL filter: checking verdicts, running \(self.urlFilter == .running, privacy: .public)")
+        for address in addresses {
+            guard let url = URL(string: address) else { continue }
+            let verdict = await NEURLFilter.verdict(for: url)
+            Self.log.notice("URL filter: verdict \(verdict.rawValue, privacy: .public) \(String(describing: verdict), privacy: .public) for \(address, privacy: .public)")
+        }
+    }
+    #endif
 
     /// Throws away what the system has cached from the lookup server.
     func resetURLFilterCache() async {

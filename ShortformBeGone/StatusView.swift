@@ -110,8 +110,8 @@ struct StatusView: View {
         switch filter.urlFilter {
         case .unavailable: "Unavailable"
         case .notConfigured: "Not set up"
-        case .stopped: "Stopped"
-        case .starting: "Starting…"
+        case .stopped: "Off"
+        case .starting: "Checking…"
         case .running: "On"
         case .failed: "Problem"
         }

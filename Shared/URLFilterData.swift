@@ -28,8 +28,12 @@ nonisolated enum URLFilterData {
             keys += extraSubdomains.map { "\($0).\(host)" }
         }
         for path in rules.denyPaths {
-            keys.append(path.text)
-            keys += extraSubdomains.map { "\($0).\(path.text)" }
+            // Both forms: the address itself, and the form with a trailing
+            // slash, which is how the system looks up the pages beneath it.
+            for text in [path.text, path.text + "/"] {
+                keys.append(text)
+                keys += extraSubdomains.map { "\($0).\(text)" }
+            }
         }
         var seen = Set<String>()
         return keys.filter { seen.insert($0).inserted }
