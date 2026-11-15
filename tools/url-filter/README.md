@@ -121,11 +121,16 @@ Installing it from Apple Configurator needed a confirmation on the phone.
   configuration; the profile stayed listed while nothing was being filtered.
   Removing and reinstalling the profile brought the filter back. A release
   build must therefore have no way to switch it off.
-- Not yet checked: whether Settings lets the person switch off or delete a
-  profile-installed URL filter.
+- The test profile has no removal password, and was removed by hand in
+  Settings in a few taps, taking the URL filter with it. The main profile,
+  which has one, could not be removed. So the URL filter payload has to live
+  inside the password-protected profile to be locked. Not tested: the payload
+  inside that profile, and whether Settings shows a separate off switch for
+  the filter itself.
 
 ### Still open
 
-- Whether Settings offers an off switch for a profile-installed URL filter.
+- Whether Settings offers an off switch for a profile-installed URL filter,
+  and the URL filter payload inside the password-protected profile.
 - How often lookups time out in ordinary use.
 - Sharing this needs hosted lookup servers and Apple's approval.
