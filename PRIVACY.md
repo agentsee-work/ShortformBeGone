@@ -11,4 +11,4 @@ ShortformBeGone collects no data.
 
 Because nothing is collected, there is nothing to share, sell, or delete.
 
-Questions: open an issue on the project page, or use the support contact on the App Store listing.
+Questions: [open an issue](https://github.com/agentsee-work/ShortformBeGone/issues).

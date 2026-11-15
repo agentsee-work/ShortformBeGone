@@ -117,3 +117,7 @@ tools/screenshots.sh         # regenerate the App Store screenshots
 ```
 
 Submission notes are in [AppStore/README.md](AppStore/README.md).
+
+## License
+
+[MIT](LICENSE). Copyright (c) 2026 AgentSee.

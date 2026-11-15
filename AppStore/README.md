@@ -97,7 +97,7 @@ Suggested order: `1-status`, `2-rules-blocked`, `3-setup`, `4-install-profile`. 
 1. **Sign in to Xcode** with the developer account (Xcode → Settings → Accounts). No signing certificate is on this Mac yet.
 2. **Open the project and let Xcode register the three App IDs.** Select each of the three targets → Signing & Capabilities and check there are no errors. The Network Extensions capability (Content Filter) is already declared in each target's entitlements file.
 3. **Test on your supervised phone:** run from Xcode once, then install the profile. Its `PluginBundleID` is already `agentsee.ShortformBeGone`.
-4. **Host the privacy policy** (`PRIVACY.md`) at a public URL, and decide a support URL. A public GitHub repository covers both.
+4. **Privacy policy URL:** `https://github.com/agentsee-work/ShortformBeGone/blob/main/PRIVACY.md`. **Support URL:** `https://github.com/agentsee-work/ShortformBeGone/issues`.
 5. **Create the app in App Store Connect** with bundle ID `agentsee.ShortformBeGone`, and paste in the text above.
 6. **Archive and upload:** Product → Archive → Distribute App → App Store Connect.
 7. **Submit for review** with the review notes above.
