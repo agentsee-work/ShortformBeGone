@@ -1,0 +1,21 @@
+{
+    "manifest_version": 3,
+    "name": "ShortformBeGone Guard",
+    "description": "Sends you back to a site's home page when the address becomes a Short or a Reel, however you got there.",
+    "version": "1.0",
+    "content_scripts": [
+        {
+            "js": [
+                "content.js"
+            ],
+            "matches": [
+                "*://*.youtube.com/*",
+                "*://*.instagram.com/*",
+                "*://*.facebook.com/*",
+                "*://*.snapchat.com/*"
+            ],
+            "run_at": "document_start",
+            "all_frames": false
+        }
+    ]
+}

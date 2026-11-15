@@ -159,4 +159,18 @@ struct FilterRulesTests {
         #expect(!prefilter.mightContain("youtube.com/watch"))
         #expect(URLFilterData.databaseText().contains("{ keyword: \"youtube.com/shorts\", value: \"1\" }"))
     }
+
+    @Test func safariGuardScriptListsTheSameSectionsAsTheRules() throws {
+        // The script is plain JavaScript and cannot import the Swift rules, so check they agree.
+        let script = URL(fileURLWithPath: #filePath)
+            .deletingLastPathComponent().deletingLastPathComponent()
+            .appendingPathComponent("ShortformBeGoneSafariGuard/content.js")
+        let text = try String(contentsOf: script, encoding: .utf8)
+        let listed = Set(text.split(separator: "\n").compactMap { line -> String? in
+            let trimmed = line.trimmingCharacters(in: .whitespaces)
+            guard trimmed.hasPrefix("\""), let end = trimmed.dropFirst().firstIndex(of: "\"") else { return nil }
+            return String(trimmed[trimmed.index(after: trimmed.startIndex)..<end])
+        })
+        #expect(listed == Set(FilterRules.standard.denyPaths.map(\.text)))
+    }
 }
