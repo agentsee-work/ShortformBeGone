@@ -1,14 +1,14 @@
 #!/bin/bash
 # Makes the App Store screenshots by running the UI tests on the simulators
 # whose sizes App Store Connect asks for. Output: AppStore/screenshots/<device>/
-# Usage: tools/screenshots.sh ["iPhone 18 Pro Max" "iPad Pro 13-inch (M5)" ...]
+# Usage: tools/screenshots.sh ["iPhone 18 Pro" "iPad Pro 13-inch (M5)" ...]
 
 set -euo pipefail
 cd "$(dirname "$0")/.."
 export DEVELOPER_DIR="${DEVELOPER_DIR:-/Applications/Xcode.app/Contents/Developer}"
 
 if [ "$#" -eq 0 ]; then
-  set -- "iPhone 18 Pro Max" "iPad Pro 13-inch (M5)"
+  set -- "iPhone 18 Pro" "iPhone 18 Pro Max" "iPad Pro 13-inch (M5)"
 fi
 
 for device in "$@"; do

@@ -99,7 +99,8 @@ In `AppStore/screenshots/`, already at the required sizes:
 
 | Folder | Size | App Store Connect slot |
 | --- | --- | --- |
-| `iPhone 18 Pro Max` | 1320 × 2868 | iPhone 6.9" |
+| `iPhone 18 Pro` | 1206 × 2622 | iPhone with Dynamic Island, medium display (6.1" or 6.3"); the slot the version page shows first |
+| `iPhone 18 Pro Max` | 1320 × 2868 | iPhone 6.9", under View All Sizes in Media Manager |
 | `iPad Pro 13-inch (M5)` | 2064 × 2752 | iPad 13" |
 
 Suggested order: `1-status`, `2-rules-blocked`, `3-setup`, `4-install-profile`. Regenerate with `tools/screenshots.sh`.
