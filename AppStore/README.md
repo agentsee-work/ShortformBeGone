@@ -71,6 +71,9 @@ Paste into "Notes" under App Review Information:
 ```
 ShortformBeGone blocks short-form video (Reels, Shorts, TikTok-style feeds) for people who want it off their own device.
 
+WHY THIS APP EXISTS
+I built it for myself. Short-form video feeds were costing me hours and attention, and every tool I tried (app timers, Screen Time limits, blockers) left the off switch with me, so each one lasted until the first weak evening. Blocking the sites and apps outright was not the answer either: long-form YouTube, and messages and posts on Instagram and Facebook, are worth keeping. I could not find an app that removes only the short-form sections of those sites and can also be locked so that the person using it cannot undo it on impulse. ShortformBeGone puts those pieces together: two Safari extensions that work at once on any device, a network content filter for a supervised device, and a guide to supervising your own device with a removal password held by someone you trust. It is free, open source (https://github.com/agentsee-work/ShortformBeGone), collects nothing, and is offered to other people in the same position.
+
 TO TEST ON ANY DEVICE, NO SIGN-IN:
 1. Open Settings > Apps > Safari > Extensions. Switch on ShortformBeGone, and ShortformBeGone Guard (allow it for youtube.com).
 2. In Safari, open youtube.com/shorts or instagram.com/reels: they do not load. youtube.com/watch?v=... still plays.
