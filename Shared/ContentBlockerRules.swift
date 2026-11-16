@@ -31,7 +31,7 @@ nonisolated enum ContentBlockerRules {
         // Facebook's Reels tab switches views inside the page, so no address
         // is loaded that a rule could refuse; hiding the tab is the only lever.
         // Its mobile site labels controls rather than linking them, hence the
-        // aria-label selectors. They are English-only and unverified guesses.
+        // aria-label selectors. They are English-only.
         ("facebook.com", [
             "a[href*=\"/reel/\"]",
             "a[href^=\"/reel\"]",

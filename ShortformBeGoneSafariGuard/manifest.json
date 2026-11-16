@@ -3,6 +3,12 @@
     "name": "ShortformBeGone Guard",
     "description": "Sends you back to a site's home page when the address becomes a Short or a Reel, however you got there.",
     "version": "1.0",
+    "icons": {
+        "48": "icon-48.png",
+        "96": "icon-96.png",
+        "128": "icon-128.png",
+        "256": "icon-256.png"
+    },
     "content_scripts": [
         {
             "js": [

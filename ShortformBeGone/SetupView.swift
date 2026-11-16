@@ -163,13 +163,13 @@ struct AboutView: View {
     var body: some View {
         List {
             Section("What this app is") {
-                Text("ShortformBeGone is a content filter for people who want short-form video off their own phone for good. It blocks Reels, Shorts and TikTok-style feeds while leaving messaging, long-form video and ordinary browsing alone.")
+                Text("ShortformBeGone is a content filter for people who want short-form video off their own device for good. It blocks Reels, Shorts and TikTok-style feeds while leaving messaging, long-form video and ordinary browsing alone.")
                 Text("It is free, has no account, no ads and no purchases.")
             }
             .font(.subheadline)
 
             Section("Privacy") {
-                Text("The filter checks each web address against the rule list on this device and either allows or blocks it. It keeps no history, has no network access of its own, and sends nothing to anyone. The app collects no data.")
+                Text("The filter checks each web address against the rule list on this device and either allows or blocks it. It keeps no history, makes no network connections, and sends nothing to anyone. The app collects no data.")
             }
             .font(.subheadline)
 

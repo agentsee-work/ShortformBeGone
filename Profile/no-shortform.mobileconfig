@@ -5,7 +5,7 @@
 
   Before installing:
     1. Install the ShortformBeGone app on the device.
-    2. Run tools/set-removal-password.sh to replace CHANGE_ME_REMOVAL_PASSWORD.
+    2. Run set-removal-password.sh (shared with this file) to replace CHANGE_ME_REMOVAL_PASSWORD.
     3. Delete the lines for any apps you need to keep.
     4. Install with Apple Configurator (Add > Profiles).
 
@@ -103,7 +103,7 @@
 			<string>Plugin</string>
 			<key>UserDefinedName</key>
 			<string>ShortformBeGone</string>
-			<!-- The bundle ID of the ShortformBeGone app. Change it only if you built your own copy. -->
+			<!-- The bundle ID of the ShortformBeGone app. Leave it as it is. -->
 			<key>PluginBundleID</key>
 			<string>agentsee.ShortformBeGone</string>
 			<key>FilterBrowsers</key>

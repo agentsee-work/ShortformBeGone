@@ -60,20 +60,20 @@ enum SetupGuide {
             title: "Get ready",
             summary: "Protect your sign-ins and back up before anything is erased.",
             time: "1–2 hours",
-            warning: "Step 2 erases this device. Do not start it until everything here is done.",
+            warning: "The next step erases this device. Do not start it until everything here is done.",
             sections: [
                 .init(heading: "Start this first", items: [
-                    "Turn off Find My: Settings → your name → Find My → Find My iPhone. With Stolen Device Protection on, iOS makes you wait an hour first, so start now.",
+                    "Turn off Find My: Settings → your name → Find My → Find My iPhone (or Find My iPad). With Stolen Device Protection on, iOS makes you wait an hour first, so start now.",
                     "When the hour is up you get only a short window: confirm with Face ID, turn Find My off, enter your Apple Account password.",
                 ]),
                 .init(heading: "Sign-ins", items: [
                     "Move every authenticator code to a password manager you can reach from another device.",
-                    "Switch accounts that approve sign-ins on this phone to another method first.",
-                    "Save recovery codes for email, Apple Account and bank somewhere off this phone.",
-                    "Check how your bank, work apps and eSIM handle a new phone.",
+                    "Switch accounts that approve sign-ins on this device to another method first.",
+                    "Save recovery codes for email, Apple Account and bank somewhere off this device.",
+                    "Check how your bank, work apps and eSIM handle a new device.",
                 ]),
                 .init(heading: "Backups", items: [
-                    "Unpair your Apple Watch, which backs it up to the phone.",
+                    "Unpair your Apple Watch, which backs it up to your iPhone.",
                     "Back up WhatsApp and Signal from inside those apps.",
                     "Turn on iCloud sync for Messages, Photos, Health and Passwords.",
                     "Make an encrypted backup to the Mac in Finder as a safety net.",
@@ -123,6 +123,10 @@ enum SetupGuide {
             time: "20 minutes",
             warning: nil,
             sections: [
+                .init(heading: "What the profile does", items: [
+                    "It collects no data. The filter it switches on checks each address against the list on this device, keeps no history and sends nothing anywhere.",
+                    "It blocks the listed apps and other browsers, and stops the filter being removed without the removal password.",
+                ]),
                 .init(heading: "Get the files to the Mac", items: [
                     "Send the profile and its script to your Mac with AirDrop, using the button above. Both arrive in Downloads.",
                 ]),

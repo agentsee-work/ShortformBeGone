@@ -28,7 +28,7 @@ No other company's product names here or in the subtitle: App Review rejects tho
 ShortformBeGone blocks short-form, infinite-scroll video on your iPhone or iPad: Instagram Reels, YouTube Shorts, TikTok and feeds like them. Messaging, long-form video and ordinary browsing keep working.
 
 WORKS IN A MINUTE
-Switch on the ShortformBeGone Safari blocker in Settings and Shorts and Reels stop loading in Safari straight away, even from inside a site you already have open. Long-form YouTube keeps working.
+The app adds two Safari extensions. Switch on the ShortformBeGone content blocker in Settings and Shorts and Reels stop loading in Safari straight away. Switch on ShortformBeGone Guard and allow it for YouTube, Instagram, Facebook and Snapchat, and you are also taken back to the home page when you reach a Short or Reel from inside a site you already have open. Long-form YouTube keeps working.
 
 A LOCK FOR WHEN WILLPOWER RUNS OUT
 A blocker you can switch off in a tap does not survive a weak moment. For people who have tried app timers and deleted-then-reinstalled their way through every softer option, the app includes a full guide to locking your device down: a content filter that cannot be switched off in Settings, the apps themselves blocked, and a removal password that you hand to someone else.
@@ -52,7 +52,7 @@ IN THE APP
 • Setup: the full guide, and the profile ready to send to your Mac
 
 PRIVATE BY DESIGN
-Safari applies the blocking rules itself; the app never sees what you browse. The Guard reads only the address, only on the four sites it covers, and keeps nothing. The content filter checks each address against a list on your device and keeps no history. No account, no analytics, no ads, no purchases. Nothing leaves your device.
+Safari applies the blocking rules itself; the app never sees what you browse. The Guard runs only on the four sites it covers, looks only at the page address, and keeps nothing. The content filter checks each address against a list on your device and keeps no history. No account, no analytics, no ads, no purchases. Nothing leaves your device.
 
 Free, and staying free.
 ```

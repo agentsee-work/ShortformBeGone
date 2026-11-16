@@ -34,7 +34,9 @@ struct RulesView: View {
                 } header: {
                     Text("Blocked sites")
                 } footer: {
-                    Text("Blocked completely, including every subdomain, in Safari and in all apps.")
+                    Text(filter.state == .active
+                         ? "Blocked completely, including every subdomain, in Safari and for every app."
+                         : "Blocked completely, including every subdomain, in Safari. With the network filter set up, they are blocked for every app.")
                 }
 
                 Section {
@@ -44,7 +46,9 @@ struct RulesView: View {
                 } header: {
                     Text("Blocked sections")
                 } footer: {
-                    Text("Only addresses starting with these are blocked, in Safari and in-app browsers. The rest of each site keeps working.")
+                    Text(filter.state == .active
+                         ? "Only addresses starting with these are blocked, in Safari and in-app browsers. The rest of each site keeps working."
+                         : "Only addresses starting with these are blocked, in Safari. The rest of each site keeps working.")
                 }
 
                 Section {

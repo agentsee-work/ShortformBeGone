@@ -68,7 +68,7 @@ struct StatusView: View {
                 }
 
                 Section {
-                    Label("Nothing you browse leaves this device. The filter has no network access and keeps no history.", systemImage: "lock")
+                    Label("Nothing you browse leaves this device. The filter makes no network connections and keeps no history.", systemImage: "lock")
                         .font(.footnote)
                         .foregroundStyle(.secondary)
                 }
@@ -164,7 +164,7 @@ struct StatusView: View {
         case .checking:
             "Looking for the filter and the Safari blocker."
         case .blocked:
-            "Both layers are running. Reels, Shorts and TikTok-style feeds are blocked in Safari and in every app."
+            "Both layers are running. Reels, Shorts and TikTok-style feeds are blocked in Safari, and the listed sites are blocked for every app."
         case .needsSafariBlocker:
             "The network filter is running, but Shorts and Reels can still be reached from inside a site that is already open. The Safari blocker closes that."
         case .safariOnly:
