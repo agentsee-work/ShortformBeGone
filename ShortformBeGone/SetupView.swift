@@ -148,7 +148,7 @@ struct SetupStepView: View {
 enum ProfileFile {
     /// Where the profile template and the script that sets its removal
     /// password are published. They are downloaded on the Mac, not shipped here.
-    static let page = URL(string: "https://github.com/agentsee-work/ShortformBeGone/tree/main/Profile")!
+    static let page = URL(string: "https://agentsee.work/shortformbegone/#profile")!
 }
 
 struct AboutView: View {
@@ -176,7 +176,8 @@ struct AboutView: View {
 
             Section("Help") {
                 Link("Email apps@agentsee.work", destination: URL(string: "mailto:apps@agentsee.work")!)
-                Link("Report a problem on GitHub", destination: URL(string: "https://github.com/agentsee-work/ShortformBeGone/issues")!)
+                Link("Help and support", destination: URL(string: "https://agentsee.work/shortformbegone/support/")!)
+                Link("Privacy policy", destination: URL(string: "https://agentsee.work/shortformbegone/privacy/")!)
             }
 
             Section {

@@ -67,7 +67,7 @@ Configurator is flaky. If Prepare hangs or fails, quit it, reconnect and run Pre
 
 ### 3. Install the profile
 
-1. Download the two files in [`Profile/`](Profile) into Downloads on the Mac: `no-shortform.mobileconfig` and `set-removal-password.sh`. The app's Setup → Install the profile step has a button that sends this link to your Mac.
+1. Download the two files into Downloads on the Mac: `no-shortform.mobileconfig` and `set-removal-password.sh`. They are in [`Profile/`](Profile) and at [agentsee.work/shortformbegone](https://agentsee.work/shortformbegone/#profile); the app's Setup → Install the profile step has a button that sends that link to your Mac. The website's copies are made from `Profile/`, so copy both across again whenever they change here.
 2. Open the profile in a text editor and delete the lines for apps you need to keep. Edit `DenyHosts` / `DenyPaths` to change the rules.
 3. Set the removal password without seeing it:
 
