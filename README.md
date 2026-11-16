@@ -117,8 +117,7 @@ Requires Xcode 27 and, to run on a device, a paid Apple Developer account (Netwo
 | `ShortformBeGoneFilterControl` | `NEFilterControlProvider`: required partner, does nothing |
 | `ShortformBeGoneSafariBlocker` | Safari content blocker: rules generated from the same list |
 | `ShortformBeGoneSafariGuard` | Safari web extension: `content.js` leaves short-form sections reached in-page |
-| `ShortformBeGoneURLFilter` | Prototype of the system URL filter; see `tools/url-filter/README.md` |
-| `Shared/FilterRules.swift` | The rule matcher, used by all three |
+| `Shared/FilterRules.swift` | The rule matcher, used by the app, the filter and the Safari blocker |
 
 If you change the bundle ID, change `PluginBundleID` in the profile to match. A development-signed build expires after a year; an App Store build does not.
 
@@ -128,6 +127,8 @@ tools/screenshots.sh         # regenerate the App Store screenshots
 ```
 
 Submission notes are in [AppStore/README.md](AppStore/README.md).
+
+A prototype of Apple's system URL filter, with notes from testing it on a device, is on the `url-filter-prototype` branch. It needs a lookup server and Apple's approval to distribute, so it is not part of the app.
 
 ## License
 

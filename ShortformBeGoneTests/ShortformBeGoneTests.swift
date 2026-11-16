@@ -134,32 +134,6 @@ struct FilterRulesTests {
         #expect((decoded as? [[String: Any]])?.count == list.count)
     }
 
-    /// Apple's sample URL filter ships this exact Bloom filter for these ten keys.
-    @Test func prefilterMatchesApplesReferenceFilter() {
-        var keys = ["example.com"] + (2...9).map { "example\($0).com" }
-        keys.append("example10.com/resource?query=bugs")
-        let prefilter = URLPrefilter(keys: keys, murmurSeed: 624_656_550)
-
-        #expect(prefilter.bitCount == 144)
-        #expect(prefilter.hashCount == 10)
-        #expect(prefilter.bits.map { String(format: "%02x", $0) }.joined() == "76b4df1fdadd4d4c61f0c33238c1dd8f4d26")
-    }
-
-    @Test func urlFilterKeysCoverTheRulesAndTheirMobileSubdomains() {
-        let keys = URLFilterData.keys()
-        #expect(keys.contains("youtube.com/shorts"))
-        #expect(keys.contains("m.youtube.com/shorts"))
-        #expect(keys.contains("m.youtube.com/youtubei/v1/reel"))
-        #expect(keys.contains("tiktok.com"))
-        #expect(Set(keys).count == keys.count)
-        #expect(keys.allSatisfy { $0 == $0.lowercased() && !$0.contains("://") })
-
-        let prefilter = URLPrefilter(keys: keys)
-        #expect(keys.allSatisfy(prefilter.mightContain))
-        #expect(!prefilter.mightContain("youtube.com/watch"))
-        #expect(URLFilterData.databaseText().contains("{ keyword: \"youtube.com/shorts\", value: \"1\" }"))
-    }
-
     @Test func safariGuardScriptListsTheSameSectionsAsTheRules() throws {
         // The script is plain JavaScript and cannot import the Swift rules, so check they agree.
         let script = URL(fileURLWithPath: #filePath)
