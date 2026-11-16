@@ -8,7 +8,7 @@ cd "$(dirname "$0")/.."
 export DEVELOPER_DIR="${DEVELOPER_DIR:-/Applications/Xcode.app/Contents/Developer}"
 
 if [ "$#" -eq 0 ]; then
-  set -- "iPhone 18 Pro" "iPhone 18 Pro Max" "iPad Pro 13-inch (M5)"
+  set -- "iPhone 18 Pro" "iPhone 18 Pro Max" "iPhone Duo" "iPad Pro 13-inch (M5)"
 fi
 
 for device in "$@"; do

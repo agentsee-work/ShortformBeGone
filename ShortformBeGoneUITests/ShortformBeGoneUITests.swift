@@ -74,12 +74,15 @@ final class ShortformBeGoneUITests: XCTestCase {
         XCTAssertTrue(app.buttons["Send the download link to your Mac"].waitForExistence(timeout: 5))
         snapshot("4-install-profile")
 
-        app.swipeUp()
         let done = app.switches["I have done this step"]
+        // The toggle is the last row; a short screen needs more than one swipe to reach it.
+        for _ in 0..<6 where !(done.exists && done.isHittable) { app.swipeUp() }
         XCTAssertTrue(done.waitForExistence(timeout: 5))
         done.switches.firstMatch.tap()
         XCTAssertEqual(done.value as? String, "1")
-        app.navigationBars.buttons.firstMatch.tap()
+        // The back button sits in the navigation bar, or beside the content on a wide iPhone.
+        let back = app.navigationBars.buttons.firstMatch
+        if back.exists { back.tap() } else { app.buttons["BackButton"].firstMatch.tap() }
         // The step's row now reads "Done" in place of its number.
         let doneRow = app.buttons.matching(NSPredicate(format: "label BEGINSWITH 'Done' AND label CONTAINS 'Install the profile'")).firstMatch
         XCTAssertTrue(doneRow.waitForExistence(timeout: 5))
@@ -91,11 +94,16 @@ final class ShortformBeGoneUITests: XCTestCase {
 
         XCTAssertTrue(app.staticTexts["Not set up yet"].waitForExistence(timeout: 10))
         snapshot("5-not-set-up")
-        app.buttons["Open the setup guide"].tap()
+        let openGuide = app.buttons["Open the setup guide"]
+        for _ in 0..<4 where !(openGuide.exists && openGuide.isHittable) { app.swipeUp() }
+        openGuide.tap()
         XCTAssertTrue(app.staticTexts["Switch on the Safari blocker"].waitForExistence(timeout: 5))
 
         app.swipeUp()
         app.staticTexts["About and privacy"].tap()
-        XCTAssertTrue(app.staticTexts["Version"].waitForExistence(timeout: 5))
+        // Version is the last row, below the fold on a short screen.
+        let version = app.staticTexts["Version"]
+        for _ in 0..<4 where !version.exists { app.swipeUp() }
+        XCTAssertTrue(version.waitForExistence(timeout: 5))
     }
 }
