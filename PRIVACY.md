@@ -13,4 +13,4 @@ ShortformBeGone collects no data.
 
 Because nothing is collected, there is nothing to share, sell, or delete.
 
-Questions: [open an issue](https://github.com/agentsee-work/ShortformBeGone/issues).
+Questions: email [apps@agentsee.work](mailto:apps@agentsee.work) or [open an issue](https://github.com/agentsee-work/ShortformBeGone/issues).

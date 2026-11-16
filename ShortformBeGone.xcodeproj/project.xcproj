@@ -26,7 +26,6 @@
         },
       ],
     },
-    { "kind": "folder", "path": "Profile", "target-membership": [ "ShortformBeGone" ] },
     { "kind": "folder", "path": "Shared", "target-membership": [ "ShortformBeGone", "ShortformBeGoneFilterControl", "ShortformBeGoneFilterData", "ShortformBeGoneSafariBlocker" ] },
     {
       "kind": "folder",

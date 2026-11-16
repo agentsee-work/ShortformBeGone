@@ -110,13 +110,13 @@ struct SetupStepView: View {
                 }
             }
 
-            if step.offersProfile, !ProfileFile.urls.isEmpty {
+            if step.offersProfile {
                 Section {
-                    ShareLink(items: ProfileFile.urls) {
-                        Label("Send the profile to your Mac", systemImage: "square.and.arrow.up")
+                    ShareLink(item: ProfileFile.page) {
+                        Label("Send the download link to your Mac", systemImage: "square.and.arrow.up")
                     }
                 } footer: {
-                    Text("Sends two files: the profile template and a script that locks it. The template has no password until you run the script on the Mac.")
+                    Text("The link opens the page with two files to download on the Mac: the profile template and a script that locks it. Neither is part of this app. The template has no password until you run the script.")
                 }
             }
 
@@ -146,13 +146,9 @@ struct SetupStepView: View {
 }
 
 enum ProfileFile {
-    /// The profile template and the script that sets its removal password.
-    static var urls: [URL] {
-        [
-            Bundle.main.url(forResource: "no-shortform", withExtension: "mobileconfig"),
-            Bundle.main.url(forResource: "set-removal-password", withExtension: "sh"),
-        ].compactMap { $0 }
-    }
+    /// Where the profile template and the script that sets its removal
+    /// password are published. They are downloaded on the Mac, not shipped here.
+    static let page = URL(string: "https://github.com/agentsee-work/ShortformBeGone/tree/main/Profile")!
 }
 
 struct AboutView: View {
@@ -177,6 +173,11 @@ struct AboutView: View {
                 Text("iOS only lets a content filter like this run on a supervised device. Supervision is also what makes the lock hold: the filter cannot be switched off in Settings, and the profile cannot be removed without a password you do not keep.")
             }
             .font(.subheadline)
+
+            Section("Help") {
+                Link("Email apps@agentsee.work", destination: URL(string: "mailto:apps@agentsee.work")!)
+                Link("Report a problem on GitHub", destination: URL(string: "https://github.com/agentsee-work/ShortformBeGone/issues")!)
+            }
 
             Section {
                 LabeledContent("Version", value: version)

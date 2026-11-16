@@ -5,7 +5,7 @@
 
   Before installing:
     1. Install the ShortformBeGone app on the device.
-    2. Run set-removal-password.sh (shared with this file) to replace CHANGE_ME_REMOVAL_PASSWORD.
+    2. Run set-removal-password.sh (published beside this file) to replace CHANGE_ME_REMOVAL_PASSWORD.
     3. Delete the lines for any apps you need to keep.
     4. Install with Apple Configurator (Add > Profiles).
 

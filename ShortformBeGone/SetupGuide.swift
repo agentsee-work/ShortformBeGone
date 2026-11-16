@@ -128,7 +128,8 @@ enum SetupGuide {
                     "It blocks the listed apps and other browsers, and stops the filter being removed without the removal password.",
                 ]),
                 .init(heading: "Get the files to the Mac", items: [
-                    "Send the profile and its script to your Mac with AirDrop, using the button above. Both arrive in Downloads.",
+                    "Send the download link to your Mac with AirDrop, using the button above.",
+                    "On the Mac, download both files into Downloads: no-shortform.mobileconfig and set-removal-password.sh.",
                 ]),
                 .init(heading: "On the Mac", items: [
                     "Open the profile in a text editor and delete the lines for any apps you need to keep. LinkedIn and Threads are marked optional.",

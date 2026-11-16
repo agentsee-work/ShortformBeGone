@@ -49,7 +49,7 @@ WHAT IT LEAVES ALONE
 IN THE APP
 • Status: which layers are running
 • Rules: what is blocked, and a box to test any address
-• Setup: the full guide, and the profile ready to send to your Mac
+• Setup: the full guide, with a link to the profile for your Mac
 
 PRIVATE BY DESIGN
 Safari applies the blocking rules itself; the app never sees what you browse. The Guard runs only on the four sites it covers, looks only at the page address, and keeps nothing. The content filter checks each address against a list on your device and keeps no history. No account, no analytics, no ads, no purchases. Nothing leaves your device.
@@ -81,7 +81,7 @@ The app has three parts:
 - A Safari web extension ("Guard") with one content script and no background page. On youtube.com, instagram.com, facebook.com and snapchat.com it reads the page address and returns to the site's home page when the address is a short-form section opened without a page load. It collects and sends nothing.
 - A network content filter (NEFilterDataProvider + NEFilterControlProvider). As documented in TN3134, this only runs on a supervised device, where it is enabled by a com.apple.webcontent-filter configuration profile. The app never calls NEFilterManager.saveToPreferences. On a review device the Status tab reports it as "Not set up", which is expected.
 
-The Setup tab is a guide to supervising one's own device. Its "Install the profile" step shares the configuration profile template (bundled in the app) and a small shell script that the user runs on their own Mac to set the profile's removal password. The script is never executed on the device.
+The Setup tab is a guide to supervising one's own device. The app does not contain, install or offer a configuration profile: its "Install the profile" step shares a link to the open-source project page, where the user downloads the profile template on their own Mac and installs it themselves with Apple Configurator.
 
 To see the network filter running: supervise a test device with Apple Configurator, install the app, then install the profile with Apple Configurator. The Status tab turns green.
 
@@ -106,11 +106,11 @@ Suggested order: `1-status`, `2-rules-blocked`, `3-setup`, `4-install-profile`. 
 1. **Sign in to Xcode** with the developer account (Xcode → Settings → Accounts). No signing certificate is on this Mac yet.
 2. **Open the project and let Xcode register the five App IDs** (the app and its four extensions). Select each of those five targets → Signing & Capabilities and check there are no errors. The Network Extensions capability (Content Filter) is already declared in the entitlements of the app and the two filter extensions.
 3. **Test on your supervised phone:** run from Xcode once, then install the profile. Its `PluginBundleID` is already `agentsee.ShortformBeGone`.
-4. **Privacy policy URL:** `https://github.com/agentsee-work/ShortformBeGone/blob/main/PRIVACY.md`. **Support URL:** `https://github.com/agentsee-work/ShortformBeGone/issues`.
+4. **Privacy policy URL:** `https://github.com/agentsee-work/ShortformBeGone/blob/main/PRIVACY.md`. **Support URL:** `https://github.com/agentsee-work/ShortformBeGone/issues`. **Contact email** (App Review Information and the app's About screen): `apps@agentsee.work`; the inbox must exist before submitting. Once the ShortformBeGone page on agentsee.work is live, use it for both URLs and for `ProfileFile.page` in `SetupView.swift`.
 5. **Create the app in App Store Connect** with bundle ID `agentsee.ShortformBeGone`, and paste in the text above.
 6. **Archive and upload:** Product → Archive → Distribute App → App Store Connect.
 7. **Submit for review** with the review notes above.
 
 ## Review risk
 
-Lower than before: the Safari blocker works on a reviewer's ordinary device, so the app does something visible without supervision. The network filter still cannot be shown on an unsupervised device; the review notes explain that. A screen recording of the full lock on your supervised phone is still worth attaching.
+Lower than before: the Safari blocker works on a reviewer's ordinary device, so the app does something visible without supervision, and the profile is no longer inside the app (guideline 5.5 restricts apps that offer configuration profiles). The network filter still cannot be shown on an unsupervised device; the review notes explain that. A screen recording of the full lock on your supervised phone is still worth attaching.

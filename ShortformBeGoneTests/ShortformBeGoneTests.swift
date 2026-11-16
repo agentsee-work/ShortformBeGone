@@ -94,9 +94,10 @@ struct FilterRulesTests {
         #expect(hostsOnly.denyPaths == FilterRules.standard.denyPaths)
     }
 
-    /// The profile template shipped in the app must carry the same rules as the built-in list.
-    @Test func bundledProfileMatchesStandardRules() throws {
-        let url = try #require(Bundle.main.url(forResource: "no-shortform", withExtension: "mobileconfig"))
+    /// The published profile template must carry the same rules as the built-in list.
+    @Test func publishedProfileMatchesStandardRules() throws {
+        let url = URL(fileURLWithPath: #filePath).deletingLastPathComponent().deletingLastPathComponent()
+            .appendingPathComponent("Profile/no-shortform.mobileconfig")
         let profile = try #require(try PropertyListSerialization.propertyList(from: Data(contentsOf: url), format: nil) as? [String: Any])
         let payloads = try #require(profile["PayloadContent"] as? [[String: Any]])
         let filter = try #require(payloads.first { $0["PayloadType"] as? String == "com.apple.webcontent-filter" })

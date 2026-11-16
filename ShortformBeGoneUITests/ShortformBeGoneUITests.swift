@@ -71,7 +71,7 @@ final class ShortformBeGoneUITests: XCTestCase {
         let profileStep = app.staticTexts["Install the profile"]
         if !profileStep.isHittable { app.swipeUp() }
         profileStep.tap()
-        XCTAssertTrue(app.buttons["Send the profile to your Mac"].waitForExistence(timeout: 5))
+        XCTAssertTrue(app.buttons["Send the download link to your Mac"].waitForExistence(timeout: 5))
         snapshot("4-install-profile")
 
         app.swipeUp()

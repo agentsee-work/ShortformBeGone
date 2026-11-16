@@ -67,7 +67,7 @@ Configurator is flaky. If Prepare hangs or fails, quit it, reconnect and run Pre
 
 ### 3. Install the profile
 
-1. In the app: Setup → Install the profile → **Send the profile to your Mac**. Two files arrive in Downloads: `no-shortform.mobileconfig` and `set-removal-password.sh`. (Both are also in [`Profile/`](Profile).)
+1. Download the two files in [`Profile/`](Profile) into Downloads on the Mac: `no-shortform.mobileconfig` and `set-removal-password.sh`. The app's Setup → Install the profile step has a button that sends this link to your Mac.
 2. Open the profile in a text editor and delete the lines for apps you need to keep. Edit `DenyHosts` / `DenyPaths` to change the rules.
 3. Set the removal password without seeing it:
 
